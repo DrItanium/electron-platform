@@ -1,1 +1,6 @@
 fssrv is a library that serves a custom file system to electron
+
+The idea is to completely abstract the filesystem away from the 
+expert system. To the point of even removing the shell variable
+support from it. 
+
