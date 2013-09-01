@@ -1,4 +1,3 @@
-
 /*
  * efssrv
  * Copyright (c) 2013, Joshua Scoggins 
@@ -52,16 +51,35 @@ void DefineFSOverrideFunctions(void* theEnv) {
             PTIEF EFS_LoadStarCommand,
             (char*)"EFS_LoadStarCommand",
             (char*)"11k");
+    EnvDefineFunction2(theEnv,
+            (char*)"open",       
+            'b', 
+            PTIEF EFS_OpenFunction,  
+            (char*)"EFS_OpenFunction", 
+            (char*)"23*k");
+    EnvDefineFunction2(theEnv,
+            (char*)"remove",   
+            'b', 
+            PTIEF EFS_RemoveFunction,  
+            (char*)"EFS_RemoveFunction", 
+            (char*)"11k");
+    EnvDefineFunction2(theEnv,
+            (char*)"rename",   
+            'b',
+            PTIEF EFS_RenameFunction, 
+            (char*)"EFS_RenameFunction", 
+            (char*)"22k");
 }
 // C access functions
 int EFS_Batch(void* theEnv, char* path) {
-    int result;
-    char* tmp, base;
+    int result, size;
+    char* tmp;
+    char* base;
 
     base = getenv((const char*)FILE_SYSTEM_BASE);
 
     if(base != NULL) {
-        int size = sizeof(char) * (strlen(path) + strlen(base) + 1);
+        size = sizeof(char) * (strlen(path) + strlen(base) + 2);
         tmp = gm1(theEnv, size);
         gensprintf(tmp, "%s/%s", base, path);
         result = Batch(theEnv, tmp);
@@ -75,13 +93,14 @@ int EFS_Batch(void* theEnv, char* path) {
     }
 }
 int EFS_EnvBatchStar(void* theEnv, char* path) {
-    int result;
-    char* tmp, base;
+    int result, size;
+    char* tmp;
+    char* base;
 
     base = getenv((const char*)FILE_SYSTEM_BASE);
 
     if(base != NULL) {
-        int size = sizeof(char) * (strlen(path) + strlen(base) + 1);
+        size = sizeof(char) * (strlen(path) + strlen(base) + 2);
         tmp = gm1(theEnv, size);
         gensprintf(tmp, "%s/%s", base, path);
         result = EnvBatchStar(theEnv, tmp);
@@ -96,13 +115,14 @@ int EFS_EnvBatchStar(void* theEnv, char* path) {
 }
 
 int EFS_EnvLoad(void* theEnv, char* path) {
-    int result;
-    char* tmp, base;
+    int result, size;
+    char* tmp; 
+    char* base;
 
     base = getenv((const char*)FILE_SYSTEM_BASE);
 
     if(base != NULL) {
-        int size = sizeof(char) * (strlen(path) + strlen(base) + 2);
+        size = sizeof(char) * (strlen(path) + strlen(base) + 2);
         tmp = gm1(theEnv, size);
         gensprintf(tmp, "%s/%s", base, path);
         result = EnvLoad(theEnv, tmp);
@@ -194,3 +214,140 @@ int EFS_BatchStarCommand(void *theEnv) {
 }
 
 
+int EFS_RemoveFunction(void *theEnv) {
+    char *theFileName;
+    char *base;
+    char* tmp;
+    int result, size;
+
+
+    if (EnvArgCountCheck(theEnv,(char*)"remove",EXACTLY,1) == -1) 
+        return(FALSE);
+
+
+    if ((theFileName = GetFileName(theEnv,(char*)"remove",1)) == NULL) 
+        return(FALSE);
+
+    base = getenv((const char*)FILE_SYSTEM_BASE);
+
+    if(base == NULL) {
+        return 0;
+    } else {
+        size = sizeof(char) * (strlen(theFileName) + strlen(base) + 2);
+        tmp = gm1(theEnv, size);
+        gensprintf(tmp, "%s/%s", base, theFileName);
+        result = (genremove(theFileName));
+        rm(theEnv,tmp, size);
+        return result;
+    }
+
+}
+
+int EFS_RenameFunction(void *theEnv) {
+    char* oldFileName;
+    char* newFileName;
+    char* old;
+    char* new;
+    char* base;
+    int sizeOld, sizeNew, result;
+
+    if (EnvArgCountCheck(theEnv,(char*)"rename",EXACTLY,2) == -1) 
+        return(FALSE);
+
+
+    if ((oldFileName = GetFileName(theEnv,(char*)"rename",1)) == NULL) 
+        return(FALSE);
+    if ((newFileName = GetFileName(theEnv,(char*)"rename",2)) == NULL) 
+        return(FALSE);
+
+    base = getenv((const char*)FILE_SYSTEM_BASE);
+
+    if(base == NULL) {
+        return 0;
+    } else {
+        sizeOld = sizeof(char) * (strlen(base) + strlen(oldFileName) + 2);
+        sizeNew = sizeof(char) * (strlen(base) + strlen(newFileName) + 2);
+        old = gm1(theEnv, sizeOld);
+        new = gm1(theEnv, sizeNew);
+        gensprintf(old, "%s/%s", base, oldFileName);
+        gensprintf(new, "%s/%s", base, newFileName);
+        result = genrename(old,new);
+        rm(theEnv,old, sizeOld);
+        rm(theEnv,new, sizeNew);
+        return result;
+    }
+
+}
+int EFS_OpenFunction(void *theEnv) {
+    int numberOfArguments, size, result;
+    char* base;
+    char* tmp;
+    char* fileName;
+    char* logicalName;
+    char* accessMode = NULL;
+    DATA_OBJECT theArgument;
+
+    if ((numberOfArguments = EnvArgRangeCheck(theEnv,(char*)"open",2,3)) == -1) 
+        return(0);
+
+    if ((fileName = GetFileName(theEnv,(char*)"open",1)) == NULL) 
+        return(0);
+
+
+    logicalName = GetLogicalName(theEnv,2,NULL);
+    if (logicalName == NULL) {
+        SetHaltExecution(theEnv,TRUE);
+        SetEvaluationError(theEnv,TRUE);
+        IllegalLogicalNameMessage(theEnv,(char*)"open");
+        return(0);
+    }
+
+    if (FindFile(theEnv,logicalName)) {
+        SetHaltExecution(theEnv,TRUE);
+        SetEvaluationError(theEnv,TRUE);
+        PrintErrorID(theEnv,(char*)"IOFUN",2,FALSE);
+        EnvPrintRouter(theEnv,WERROR,(char*)"Logical name ");
+        EnvPrintRouter(theEnv,WERROR,logicalName);
+        EnvPrintRouter(theEnv,WERROR,(char*)" already in use.\n");
+        return(0);
+    }
+
+    if (numberOfArguments == 2) { 
+        accessMode = (char*)"r"; 
+    } else if (numberOfArguments == 3) {
+        if (EnvArgTypeCheck(theEnv,(char*)"open",3,STRING,&theArgument) == FALSE) 
+            return(0);
+        accessMode = DOToString(theArgument);
+    }
+
+    if ((strcmp(accessMode,"r") != 0) &&
+            (strcmp(accessMode,"w") != 0) &&
+            (strcmp(accessMode,"a") != 0) &&
+            (strcmp(accessMode,"r+") != 0) &&
+            (strcmp(accessMode,"w+") != 0) &&
+            (strcmp(accessMode,"a+") != 0) &&
+            (strcmp(accessMode,"rb") != 0) &&
+            (strcmp(accessMode,"wb") != 0) &&
+            (strcmp(accessMode,"ab") != 0) &&
+            (strcmp(accessMode,"r+b") != 0) &&
+            (strcmp(accessMode,"w+b") != 0) &&
+            (strcmp(accessMode,"a+b") != 0)) {
+        SetHaltExecution(theEnv,TRUE);
+        SetEvaluationError(theEnv,TRUE);
+        ExpectedTypeError1(theEnv,(char*)"open",3,(char*)"string with value \"r\", \"w\", \"a\", \"r+\", \"w+\", \"rb\", \"wb\", \"ab\", \"r+b\", or \"w+b\"");
+        return(0);
+    }
+
+
+    base = getenv((const char*)FILE_SYSTEM_BASE);
+    if(base == NULL) {
+        return 0;
+    } else {
+        size = sizeof(char) * (strlen(fileName) + strlen(base) + 2);
+        tmp = gm1(theEnv, size);
+        gensprintf(tmp, "%s/%s", base, fileName);
+        result = OpenAFile(theEnv,tmp,accessMode,logicalName);
+        rm(theEnv,tmp, size);
+        return result;
+    }
+}
