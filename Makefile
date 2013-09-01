@@ -3,7 +3,7 @@
 
 include config.mk
 
-SRC = fsoverride.c
+SRC = fsoverride.c devfs.c
 OBJ = ${SRC:.c=.o}
 
 

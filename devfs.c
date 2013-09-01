@@ -22,20 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "config.h"
-#include <electron/clips.h>
-//fsoverride.c
-extern void DefineFSOverrideFunctions(void* theEnv);
-extern int EFS_LoadStarCommand(void*);
-extern int EFS_LoadCommand(void*);
-extern int EFS_BatchCommand(void*);
-extern int EFS_BatchStarCommand(void*);
-extern int EFS_EnvBatchStar(void*, char*);
-extern int EFS_EnvLoad(void*, char*);
-extern int EFS_Batch(void*, char*);
-extern int EFS_OpenFunction(void*);
-extern int EFS_RemoveFunction(void*);
-extern int EFS_RenameFunction(void*);
 
-//devfs.c
-extern void DefineDevFSFunctions(void* theEnv);
+#include "efssrv.h"
+
+void DefineDefFSFunctions(void* theEnv) {
+
+}
+
