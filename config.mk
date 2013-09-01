@@ -8,10 +8,11 @@ PREFIX = ${ElectronFSRoot}/sys
 
 # includes and libs
 INCS = -I. -I${PREFIX}/include -I/usr/include
-LIBS = -L${PREFIX}/lib -lelectron -L/usr/lib -lc
+LIBS = -L${PREFIX}/lib -lelectron -L/usr/lib -lc -lm -lrt
 
 CFLAGS = -O2 ${INCS} -DVERSION=\"${VERSION}\"
 LDFLAGS = ${LIBS}
 
 # compiler and linker
-CC = cc
+CC ?= cc
+LD ?= ld

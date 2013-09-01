@@ -26,25 +26,31 @@ config.h:
 	@cp config.default.h $@
 
 efssrv: ${OBJ}
-	@echo AR rcs libefssrv.a ${OBJ}
+	@echo building static library
 	@${AR} rcs libefssrv.a ${OBJ}
+	@echo building dynamic library
+	@${LD} ${LDFLAGS} -shared -o libefssrv.so ${OBJS} 
 
 install: all
 	@echo installing static library to ${PREFIX}/lib
 	@mkdir -p ${PREFIX}/lib
 	@cp -f libefssrv.a ${PREFIX}/lib
+	@echo installing dynamic library to ${PREFIX}/lib
+	@cp -f libefssrv.so ${PREFIX}/lib
 	@echo installing headers to ${PREFIX}/include
 	@cp -f efssrv.h ${PREFIX}/include
 
 uninstall:
 	@echo removing static library from ${PREFIX}/lib
 	@rm -f ${PREFIX}/lib/libefssrv.a
+	@echo removing dynamic library from ${PREFIX}/lib
+	@rm -f ${PREFIX}/lib/libefssrv.so
 	@echo removing headers from ${PREFIX}/include
 	@rm -f ${PREFIX}/include/efssrv.h
 
 clean: 
 	@echo cleaning
-	@rm -f libefssrv.a ${OBJ}
+	@rm -f libefssrv.a libefssrv.so ${OBJ}
 
 .PHONY: all options clean install uninstall
 	
