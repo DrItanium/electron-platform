@@ -1,5 +1,5 @@
 ;------------------------------------------------------------------------------
-;electron-filesystem
+;electron-platform
 ;Copyright (c) 2013, Joshua Scoggins 
 ;All rights reserved.
 ;
@@ -22,6 +22,6 @@
 ;(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ;SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;------------------------------------------------------------------------------
-(load* (fs /lib/sys/core/message.clp))
-(load* (fs /lib/sys/core/strings.clp))
-(load* (fs /lib/sys/core/extensions.clp))
+(load* /lib/sys/core/message.clp)
+(load* /lib/sys/core/strings.clp)
+(load* /lib/sys/core/extensions.clp)
