@@ -1,5 +1,14 @@
-#include <electron/sysdep.h>
+#include <electron/clips.h>
 #include <efssrv.h>
+/***************/
+/* DEFINITIONS */
+/***************/
+
+#define NO_SWITCH              0
+#define BATCH_SWITCH           1
+#define BATCH_STAR_SWITCH      2
+#define LOAD_SWITCH            3
+
 /*************************************************/
 /* RerouteStdin: Processes the -f, -f2, and -l   */
 /*   options available on machines which support */
@@ -26,45 +35,35 @@ void RerouteStdin(void *theEnv, int argc, char *argv[]) {
    /* Process each of the command line arguments. */
    /*=============================================*/
 
-   for (i = 1 ; i < argc ; i++)
-     {
+   for (i = 1 ; i < argc ; i++) {
       if (strcmp(argv[i],"-f") == 0) theSwitch = BATCH_SWITCH;
 #if ! RUN_TIME
       else if (strcmp(argv[i],"-f2") == 0) theSwitch = BATCH_STAR_SWITCH;
       else if (strcmp(argv[i],"-l") == 0) theSwitch = LOAD_SWITCH;
 #endif
-      else if (theSwitch == NO_SWITCH)
-        {
+      else if (theSwitch == NO_SWITCH) {
          PrintErrorID(theEnv,(char*)"SYSDEP",2,FALSE);
          EnvPrintRouter(theEnv,WERROR,(char*)"Invalid option\n");
-        }
-      if (i > (argc-1))
-        {
+      }
+      if (i > (argc-1)) {
          PrintErrorID(theEnv,(char*)"SYSDEP",1,FALSE);
-         if(theSwitch != FACTS_FROM_COMMAND_LINE) {
-            EnvPrintRouter(theEnv,WERROR,(char*)"No file found for ");
-            switch(theSwitch)
-              {
-               case BATCH_SWITCH:
-                  EnvPrintRouter(theEnv,WERROR,(char*)"-f");
-                  break;
-               case BATCH_STAR_SWITCH:
-                  EnvPrintRouter(theEnv,WERROR,(char*)"-f2");
-                  break;
-               case LOAD_SWITCH:
-                  EnvPrintRouter(theEnv,WERROR,(char*)"-l");
-              }
-               EnvPrintRouter(theEnv,WERROR,(char*)" option\n");
-            return;
-         } else {
-            EnvPrintRouter(theEnv, WERROR, (char*)"No input provided for the --args option\n");
-            return;
+         EnvPrintRouter(theEnv,WERROR,(char*)"No file found for ");
+         switch(theSwitch) {
+            case BATCH_SWITCH:
+               EnvPrintRouter(theEnv,WERROR,(char*)"-f");
+               break;
+            case BATCH_STAR_SWITCH:
+               EnvPrintRouter(theEnv,WERROR,(char*)"-f2");
+               break;
+            case LOAD_SWITCH:
+               EnvPrintRouter(theEnv,WERROR,(char*)"-l");
          }
+         EnvPrintRouter(theEnv,WERROR,(char*)" option\n");
+         return;
 
-        }
+      }
 
-      switch(theSwitch)
-        {
+      switch(theSwitch) {
          case BATCH_SWITCH:
             EFS_OpenBatch(theEnv,argv[++i],TRUE);
             break;
@@ -79,6 +78,6 @@ void RerouteStdin(void *theEnv, int argc, char *argv[]) {
          default:
             break;
 #endif
-        }
-     }
-  }
+      }
+   }
+}

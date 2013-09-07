@@ -150,16 +150,6 @@
 #include "shellvar.h"
 #endif
 
-/***************/
-/* DEFINITIONS */
-/***************/
-
-#define NO_SWITCH              0
-#define BATCH_SWITCH           1
-#define BATCH_STAR_SWITCH      2
-#define LOAD_SWITCH            3
-/* Make it possible to assert facts on the command line */
-#define FACTS_FROM_COMMAND_LINE 4
 
 /********************/
 /* ENVIRONMENT DATA */
