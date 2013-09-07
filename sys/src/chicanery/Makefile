@@ -33,7 +33,6 @@ install: all
 	@echo installing binary to ${PREFIX}/bin
 	@mkdir -p ${PREFIX}/bin
 	@cp chicanery ${PREFIX}/bin
-	@chmod 644 ${PREFIX}/bin/chicanery
 
 uninstall:
 	@echo removing binary from ${PREFIX}/bin
