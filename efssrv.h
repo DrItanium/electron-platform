@@ -36,6 +36,3 @@ extern int EFS_Batch(void*, char*);
 extern int EFS_OpenFunction(void*);
 extern int EFS_RemoveFunction(void*);
 extern int EFS_RenameFunction(void*);
-
-//devfs.c
-extern void DefineDevFSFunctions(void* theEnv);
