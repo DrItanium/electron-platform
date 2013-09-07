@@ -23,8 +23,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "efssrv.h"
 #include <stdlib.h>
+#include <electron/clips.h>
+#include "config.h"
+#include "efssrv.h"
 
 void DefineFSOverrideFunctions(void* theEnv) {
     EnvDefineFunction2(theEnv,
