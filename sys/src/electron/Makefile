@@ -1,10 +1,8 @@
 ########### MAKEFILE FOR ELECTRON ###########
-export progroot ?= $(CURDIR)
-export srcroot ?= $(progroot)
 CC := cc
 LD := cc
 OUTPUT = electron
-DESTDIR ?= $(ElectronFSRoot)/sys
+DESTDIR ?= $(ELECTRON_PLATFORM_ROOT)/sys
 BINDIR ?= bin
 INCDIR ?= include/$(OUTPUT)
 LIBDIR ?= lib

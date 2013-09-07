@@ -4,7 +4,7 @@ VERSION = 9
 # Customize below to fit your needs
 
 # paths
-PREFIX = ${ElectronFSRoot}/sys
+PREFIX = ${ELECTRON_PLATFORM_ROOT}/sys
 
 # includes and libs
 INCS = -I. -I${PREFIX}/include -I/usr/include 
