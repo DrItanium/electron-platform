@@ -31,6 +31,7 @@ extern int EFS_BatchCommand(void*);
 extern int EFS_BatchStarCommand(void*);
 extern int EFS_EnvBatchStar(void*, char*);
 extern int EFS_EnvLoad(void*, char*);
+extern int EFS_OpenBatch(void*, char*, int);
 extern int EFS_Batch(void*, char*);
 extern int EFS_OpenFunction(void*);
 extern int EFS_RemoveFunction(void*);

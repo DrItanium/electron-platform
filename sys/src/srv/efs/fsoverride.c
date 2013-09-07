@@ -73,6 +73,28 @@ void DefineFSOverrideFunctions(void* theEnv) {
             (char*)"22k");
 }
 // C access functions
+int EFS_OpenBatch(void* theEnv, char* path, int placeAtEnd) {
+    int result, size;
+    char* tmp;
+    char* base;
+
+    base = getenv((const char*)FILE_SYSTEM_BASE);
+
+    if(base != NULL) {
+        size = sizeof(char) * (strlen(path) + strlen(base) + 2);
+        tmp = gm1(theEnv, size);
+        gensprintf(tmp, "%s/%s", base, path);
+        result = OpenBatch(theEnv, tmp, placeAtEnd);
+        rm(theEnv,tmp, size);
+        return result;
+    } else {
+        EnvPrintRouter(theEnv, WERROR, (char*)"Variable " FILE_SYSTEM_BASE " was not defined, can't continue!\n");
+        SetEvaluationError(theEnv, TRUE);
+        SetHaltExecution(theEnv, TRUE);
+        return 0;
+    }
+
+}
 int EFS_Batch(void* theEnv, char* path) {
     int result, size;
     char* tmp;

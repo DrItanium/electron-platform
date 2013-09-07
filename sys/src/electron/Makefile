@@ -41,11 +41,7 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
 
 .PHONY: clean all
 
-all: program libraries
-
-program: $(OBJS) main.o
-	@echo Building $(OUTPUT)
-	@$(LD) $(LDFLAGS) -o $(OUTPUT) $(OBJS) main.o -lm -lrt
+all: libraries
 
 libraries: $(OBJS)
 	@echo Building lib$(OUTPUT).a
@@ -61,9 +57,6 @@ install:
 	@mkdir -p $(DESTDIR)/$(LIBDIR)
 	@cp lib$(OUTPUT).so $(DESTDIR)/$(LIBDIR)
 	@cp lib$(OUTPUT).a $(DESTDIR)/$(LIBDIR)
-	@echo Installing binaries to $(DESTDIR)/$(BINDIR)
-	@mkdir -p $(DESTDIR)/$(BINDIR)
-	@cp $(OUTPUT) $(DESTDIR)/$(BINDIR)
 
 deinstall uninstall:
 	@echo Uninstalling...
@@ -242,13 +235,11 @@ deinstall uninstall:
 	@rm -f $(DESTDIR)/$(INCDIR)/watch.h
 	@rm -f $(DESTDIR)/$(LIBDIR)/lib$(OUTPUT).so
 	@rm -f $(DESTDIR)/$(LIBDIR)/lib$(OUTPUT).a
-	@rm -f $(DESTDIR)/$(BINDIR)/$(OUTPUT)
 
 
 clean: 
 	@echo Cleaning
 	@rm -f *.o
-	@rm -f $(OUTPUT)
 	@rm -f libelectron.so
 	@rm -f libelectron.a
 
@@ -968,20 +959,6 @@ lgcldpnd.o: lgcldpnd.c setup.h envrnmnt.h symbol.h usrsetup.h memalloc.h \
   reorder.h retract.h reteutil.h argacces.h factmngr.h facthsh.h \
   multifld.h tmpltdef.h factbld.h insfun.h object.h
   
-main.o: main.c setup.h envrnmnt.h symbol.h usrsetup.h clips.h argacces.h \
-  expressn.h exprnops.h exprnpsr.h extnfunc.h userdata.h scanner.h \
-  pprint.h evaluatn.h constant.h moduldef.h conscomp.h constrct.h \
-  symblcmp.h modulpsr.h utility.h memalloc.h cstrcpsr.h filecom.h \
-  strngfun.h commline.h router.h prntutil.h filertr.h sysdep.h bmathfun.h \
-  watch.h modulbsc.h bload.h exprnbin.h symblbin.h bsave.h ruledef.h \
-  constrnt.h cstrccom.h agenda.h match.h network.h pattern.h reorder.h \
-  rulebsc.h engine.h lgcldpnd.h retract.h drive.h incrrset.h rulecom.h \
-  crstrtgy.h dffctdef.h dffctbsc.h tmpltdef.h factbld.h factmngr.h \
-  facthsh.h multifld.h tmpltbsc.h tmpltfun.h factcom.h factfun.h \
-  globldef.h globlbsc.h globlcom.h dffnxfun.h genrccom.h genrcfun.h \
-  object.h classcom.h classexm.h classinf.h classini.h defins.h inscom.h \
-  insfun.h insfile.h msgcom.h msgpass.h objrtmch.h
-
 memalloc.o: memalloc.c setup.h envrnmnt.h symbol.h usrsetup.h constant.h \
   memalloc.h router.h prntutil.h moduldef.h conscomp.h constrct.h \
   userdata.h evaluatn.h expressn.h exprnops.h exprnpsr.h extnfunc.h \
