@@ -6,7 +6,6 @@ DESTDIR ?= $(ELECTRON_PLATFORM_ROOT)/sys
 BINDIR ?= bin
 INCDIR ?= include/$(OUTPUT)
 LIBDIR ?= lib
-CFLAGS += -Os
 
 OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	classcom.o classexm.o classfun.o classinf.o classini.o \
