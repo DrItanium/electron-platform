@@ -1325,8 +1325,12 @@ static void MultifieldPrognDriver(
          EvaluationData(theEnv)->CurrentEvaluationDepth++;
          EvaluateExpression(theEnv,theExp,result);
          EvaluationData(theEnv)->CurrentEvaluationDepth--;
+
          if (ProcedureFunctionData(theEnv)->ReturnFlag == TRUE)
            { PropagateReturnValue(theEnv,result); }
+         else if ((theExp->nextArg == NULL) && (i == end)) 
+           { PropagateReturnValue(theEnv, result); } 
+
          PeriodicCleanup(theEnv,FALSE,TRUE);
 
          if (EvaluationData(theEnv)->HaltExecution || ProcedureFunctionData(theEnv)->BreakFlag || ProcedureFunctionData(theEnv)->ReturnFlag)
