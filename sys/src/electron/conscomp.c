@@ -339,6 +339,27 @@ static int ConstructsToC(
    /*===============================================*/
 
    ConstructCompilerData(theEnv)->MaxIndices = (int) max; /* TBD */
+   /*=====================================================*/
+   /* Open a header file for dumping general information. */
+   /*=====================================================*/
+
+   gensprintf(fileNameBuffer,"%s%s.h",pathName,fileName);
+   if ((ConstructCompilerData(theEnv)->HeaderFP = GenOpen(theEnv,fileNameBuffer,"w")) == NULL)
+     {
+      OpenErrorMessage(theEnv,"constructs-to-c",fileNameBuffer);
+      return(0);
+     }
+
+   /*============================================*/
+   /* Open a file for dumping fixup information. */
+   /*============================================*/
+
+   gensprintf(fileNameBuffer,"%s%s_init.c",pathName,fileName);
+   if ((ConstructCompilerData(theEnv)->FixupFP = GenOpen(theEnv,fileNameBuffer,"w")) == NULL)
+     {
+      OpenErrorMessage(theEnv,"constructs-to-c",fileNameBuffer);
+      return(0);
+     }
 
    /*==================================*/
    /* Call the list of functions to be */
@@ -371,17 +392,6 @@ static int ConstructsToC(
    ConstructCompilerData(theEnv)->ExpressionHeader = TRUE;
    ConstructCompilerData(theEnv)->ExpressionCount = 0;
 
-   /*=====================================================*/
-   /* Open a header file for dumping general information. */
-   /*=====================================================*/
-
-   gensprintf(fileNameBuffer,"%s%s.h",pathName,fileName);
-   if ((ConstructCompilerData(theEnv)->HeaderFP = GenOpen(theEnv,fileNameBuffer,(char*)"w")) == NULL)
-     {
-      OpenErrorMessage(theEnv,(char*)"constructs-to-c",fileNameBuffer);
-      return(0);
-     }
-
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,(char*)"#ifndef _CONSTRUCT_COMPILER_HEADER_\n");
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,(char*)"#define _CONSTRUCT_COMPILER_HEADER_\n\n");
 
@@ -404,16 +414,9 @@ static int ConstructsToC(
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,(char*)"/* EXTERN ARRAY DEFINITIONS */\n");
    fprintf(ConstructCompilerData(theEnv)->HeaderFP,(char*)"/****************************/\n\n");
 
-   /*============================================*/
-   /* Open a file for dumping fixup information. */
-   /*============================================*/
-
-   gensprintf(fileNameBuffer,"%s%s_init.c",pathName,fileName);
-   if ((ConstructCompilerData(theEnv)->FixupFP = GenOpen(theEnv,fileNameBuffer,(char*)"w")) == NULL)
-     {
-      OpenErrorMessage(theEnv,(char*)"constructs-to-c",fileNameBuffer);
-      return(0);
-     }
+   /*================================================*/
+   /* Write out the first portion of the fixup file. */
+   /*================================================*/
 
    fprintf(ConstructCompilerData(theEnv)->FixupFP,"#include \"%s.h\"\n",fileName);
    fprintf(ConstructCompilerData(theEnv)->FixupFP,"\n");
