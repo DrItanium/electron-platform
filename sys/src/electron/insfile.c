@@ -1082,7 +1082,7 @@ static void SaveSingleInstanceBinary(
       Write out the number of slot value
       atoms for the whole instance
       ================================== */
-   if (totalValueCount != 0L)
+   if (theInstance->cls->instanceSlotCount != 0) 
      fwrite((void *) &totalValueCount,(int) sizeof(unsigned long),1,bsaveFP);
 
    /* ==============================
