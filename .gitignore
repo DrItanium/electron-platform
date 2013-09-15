@@ -1,6 +1,5 @@
 sys/bin
 sys/lib
-sys/include
 sys/share/man
 *.o 
 *.swp
