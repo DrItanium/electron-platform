@@ -125,23 +125,7 @@
 #define IBM 0
 #endif
 
-
-/***********************************************/
-/* Some definitions for use with declarations. */
-/***********************************************/
-
-#define VOID_ARG void
-#define STD_SIZE size_t
-
-#define intBool int
-#define globle
-typedef signed char schar;
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
-typedef unsigned long long uvlong;
-typedef long long vlong;
+#include "types.h"
 
 /*******************************************/
 /* RUN_TIME:  Specifies whether a run-time */

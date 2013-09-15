@@ -24,8 +24,8 @@
  */
 
 #include <stdio.h>
-#include <electron/setup.h>
-#include <electron/clips.h>
+#include <setup.h>
+#include <clips.h>
 #include <efssrv.h>
 
 

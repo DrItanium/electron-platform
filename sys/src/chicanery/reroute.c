@@ -1,4 +1,4 @@
-#include <electron/clips.h>
+#include <clips.h>
 #include <efssrv.h>
 /***************/
 /* DEFINITIONS */
