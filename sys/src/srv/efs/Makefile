@@ -19,7 +19,7 @@ options:
 	@echo CC $<
 	@${CC} -c ${CFLAGS} $<
 
-${OBJ}: efssrv.h config.h config.mk
+${OBJ}: config.h config.mk
 
 config.h:
 	@echo creating $@ from config.default.h
@@ -37,16 +37,12 @@ install: all
 	@cp -f libefssrv.a ${PREFIX}/lib
 	@echo installing dynamic library to ${PREFIX}/lib
 	@cp -f libefssrv.so ${PREFIX}/lib
-	@echo installing headers to ${PREFIX}/include
-	@cp -f efssrv.h ${PREFIX}/include
 
 uninstall:
 	@echo removing static library from ${PREFIX}/lib
 	@rm -f ${PREFIX}/lib/libefssrv.a
 	@echo removing dynamic library from ${PREFIX}/lib
 	@rm -f ${PREFIX}/lib/libefssrv.so
-	@echo removing headers from ${PREFIX}/include
-	@rm -f ${PREFIX}/include/efssrv.h
 
 clean: 
 	@echo cleaning

@@ -24,9 +24,9 @@
  */
 
 #include <stdlib.h>
-#include <electron/clips.h>
+#include <clips.h>
 #include "config.h"
-#include "efssrv.h"
+#include <efssrv.h>
 
 void DefineFSOverrideFunctions(void* theEnv) {
     EnvDefineFunction2(theEnv,

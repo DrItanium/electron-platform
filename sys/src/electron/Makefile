@@ -1,62 +1,59 @@
-########### MAKEFILE FOR ELECTRON ###########
-CC := cc
-LD := cc
-OUTPUT = electron
-DESTDIR ?= $(ELECTRON_PLATFORM_ROOT)/sys
-BINDIR ?= bin
-INCS ?= -I${ELECTRON_PLATFORM_ROOT}/sys/include/
-LIBDIR ?= lib
+# Electron - tool for writing expert systems (a fork of CLIPS)
+# original code created by NASA's AI Lab 
+# changes copyright 2012-2013 Joshua Scoggins
 
-OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
- 	classcom.o classexm.o classfun.o classinf.o classini.o \
-	classpsr.o clsltpsr.o commline.o conscomp.o constrct.o \
- 	constrnt.o crstrtgy.o cstrcbin.o cstrccom.o cstrcpsr.o \
- 	cstrnbin.o cstrnchk.o cstrncmp.o cstrnops.o cstrnpsr.o \
- 	cstrnutl.o default.o defins.o developr.o dffctbin.o dffctbsc.o \
- 	dffctcmp.o dffctdef.o dffctpsr.o dffnxbin.o dffnxcmp.o \
-	dffnxexe.o dffnxfun.o dffnxpsr.o dfinsbin.o dfinscmp.o drive.o \
-	emathfun.o engine.o envrnmnt.o evaluatn.o expressn.o exprnbin.o exprnops.o \
- 	exprnpsr.o extnfunc.o factbin.o factbld.o factcmp.o factcom.o \
- 	factfun.o factgen.o facthsh.o factlhs.o factmch.o factmngr.o \
- 	factprt.o factqpsr.o factqury.o factrete.o factrhs.o filecom.o \
- 	filertr.o generate.o genrcbin.o genrccmp.o genrccom.o genrcexe.o \
- 	genrcfun.o genrcpsr.o globlbin.o globlbsc.o globlcmp.o globlcom.o \
- 	globldef.o globlpsr.o immthpsr.o incrrset.o inherpsr.o \
- 	inscom.o insfile.o insfun.o insmngr.o insmoddp.o insmult.o \
- 	inspsr.o insquery.o insqypsr.o iofun.o lgcldpnd.o \
- 	memalloc.o miscfun.o modulbin.o modulbsc.o modulcmp.o moduldef.o \
- 	modulpsr.o modulutl.o msgcom.o msgfun.o msgpass.o msgpsr.o \
- 	multifld.o multifun.o objbin.o objcmp.o objrtbin.o objrtbld.o \
- 	objrtcmp.o objrtfnx.o objrtgen.o objrtmch.o parsefun.o pattern.o \
- 	pprint.o prccode.o prcdrfun.o prcdrpsr.o prdctfun.o prntutil.o \
- 	proflfun.o reorder.o reteutil.o retract.o router.o rulebin.o \
- 	rulebld.o rulebsc.o rulecmp.o rulecom.o rulecstr.o ruledef.o \
- 	ruledlt.o rulelhs.o rulepsr.o scanner.o sortfun.o strngfun.o \
- 	strngrtr.o symblbin.o symblcmp.o symbol.o sysdep.o textpro.o \
- 	tmpltbin.o tmpltbsc.o tmpltcmp.o tmpltdef.o tmpltfun.o tmpltlhs.o \
- 	tmpltpsr.o tmpltrhs.o tmpltutl.o userdata.o userfunctions.o \
- 	utility.o watch.o binops.o arch.o shellvar.o 
+include config.mk
+SRC = agenda.c analysis.c argacces.c bload.c bmathfun.c bsave.c \
+ 	classcom.c classexm.c classfun.c classinf.c classini.c \
+	classpsr.c clsltpsr.c commline.c conscomp.c constrct.c \
+ 	constrnt.c crstrtgy.c cstrcbin.c cstrccom.c cstrcpsr.c \
+ 	cstrnbin.c cstrnchk.c cstrncmp.c cstrnops.c cstrnpsr.c \
+ 	cstrnutl.c default.c defins.c developr.c dffctbin.c dffctbsc.c \
+ 	dffctcmp.c dffctdef.c dffctpsr.c dffnxbin.c dffnxcmp.c \
+	dffnxexe.c dffnxfun.c dffnxpsr.c dfinsbin.c dfinscmp.c drive.c \
+	emathfun.c engine.c envrnmnt.c evaluatn.c expressn.c exprnbin.c exprnops.c \
+ 	exprnpsr.c extnfunc.c factbin.c factbld.c factcmp.c factcom.c \
+ 	factfun.c factgen.c facthsh.c factlhs.c factmch.c factmngr.c \
+ 	factprt.c factqpsr.c factqury.c factrete.c factrhs.c filecom.c \
+ 	filertr.c generate.c genrcbin.c genrccmp.c genrccom.c genrcexe.c \
+ 	genrcfun.c genrcpsr.c globlbin.c globlbsc.c globlcmp.c globlcom.c \
+ 	globldef.c globlpsr.c immthpsr.c incrrset.c inherpsr.c \
+ 	inscom.c insfile.c insfun.c insmngr.c insmoddp.c insmult.c \
+ 	inspsr.c insquery.c insqypsr.c iofun.c lgcldpnd.c \
+ 	memalloc.c miscfun.c modulbin.c modulbsc.c modulcmp.c moduldef.c \
+ 	modulpsr.c modulutl.c msgcom.c msgfun.c msgpass.c msgpsr.c \
+ 	multifld.c multifun.c objbin.c objcmp.c objrtbin.c objrtbld.c \
+ 	objrtcmp.c objrtfnx.c objrtgen.c objrtmch.c parsefun.c pattern.c \
+ 	pprint.c prccode.c prcdrfun.c prcdrpsr.c prdctfun.c prntutil.c \
+ 	proflfun.c reorder.c reteutil.c retract.c router.c rulebin.c \
+ 	rulebld.c rulebsc.c rulecmp.c rulecom.c rulecstr.c ruledef.c \
+ 	ruledlt.c rulelhs.c rulepsr.c scanner.c sortfun.c strngfun.c \
+ 	strngrtr.c symblbin.c symblcmp.c symbol.c sysdep.c textpro.c \
+ 	tmpltbin.c tmpltbsc.c tmpltcmp.c tmpltdef.c tmpltfun.c tmpltlhs.c \
+ 	tmpltpsr.c tmpltrhs.c tmpltutl.c userdata.c userfunctions.c \
+ 	utility.c watch.c binops.c arch.c shellvar.c 
+OBJ = ${SRC:.c=.o}
 
 .PHONY: clean all
 
 all: libraries
 
-libraries: $(OBJS)
-	@echo Building lib$(OUTPUT).a
-	@$(AR) rcs lib$(OUTPUT).a $(OBJS)
-	@echo Building lib$(OUTPUT).so
-	@$(LD) $(LDFLAGS) -shared -o lib$(OUTPUT).so $(OBJS) -lm -lrt
+libraries: ${OBJ}
+	@echo Building libelectron.a
+	@${AR} rcs libelectron.a ${OBJ}
+	@echo Building libelectron.so
+	@${LD} ${LDFLAGS} -shared -o libelectron.so ${OBJ} -lm -lrt
 
 install:
-	@echo Installing libraries to $(DESTDIR)/$(LIBDIR)
-	@mkdir -p $(DESTDIR)/$(LIBDIR)
-	@cp lib$(OUTPUT).so $(DESTDIR)/$(LIBDIR)
-	@cp lib$(OUTPUT).a $(DESTDIR)/$(LIBDIR)
+	@echo Installing libraries to ${PREFIX}/lib
+	@mkdir -p ${PREFIX}/lib
+	@cp libelectron.so ${PREFIX}/lib
+	@cp libelectron.a ${PREFIX}/lib
 
 deinstall uninstall:
 	@echo Uninstalling...
-	@rm -f $(DESTDIR)/$(LIBDIR)/lib$(OUTPUT).so
-	@rm -f $(DESTDIR)/$(LIBDIR)/lib$(OUTPUT).a
+	@rm -f ${PREFIX}/lib/libelectron.so
+	@rm -f ${PREFIX}/lib/libelectron.a
 
 
 clean: 
