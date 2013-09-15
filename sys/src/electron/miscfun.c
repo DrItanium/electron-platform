@@ -551,28 +551,9 @@ globle void OptionsCommand(
    /*=================================*/
 
    EnvPrintRouter(theEnv,WDISPLAY,(char*)"Machine type: ");
+   EnvPrintRouter(theEnv,WDISPLAY,(char*)OS_NAME);
+   EnvPrintRouter(theEnv,WDISPLAY,(char*)" ");
 
-#if GENERIC
-   EnvPrintRouter(theEnv,WDISPLAY,(char*)"Generic ");
-#endif
-#if UNIX_V
-   EnvPrintRouter(theEnv,WDISPLAY,(char*)"UNIX System V or 4.2BSD ");
-#endif
-#if DARWIN
-   EnvPrintRouter(theEnv,WDISPLAY,(char*)"Darwin ");
-#endif
-#if LINUX
-   EnvPrintRouter(theEnv,WDISPLAY,(char*)"Linux ");
-#endif
-#if UNIX_7
-   EnvPrintRouter(theEnv,WDISPLAY,(char*)"UNIX System III Version 7 or Sun Unix ");
-#endif
-#if WIN_MVC
-   EnvPrintRouter(theEnv,WDISPLAY,(char*)"Microsoft Windows with Microsoft Visual C++");
-#endif
-#if WIN_GCC
-   EnvPrintRouter(theEnv,WDISPLAY,(char*)"Microsoft Windows with DJGPP");
-#endif
 EnvPrintRouter(theEnv,WDISPLAY,(char*)"\n");
 
 EnvPrintRouter(theEnv,WDISPLAY,(char*)"Defrule construct is ");
