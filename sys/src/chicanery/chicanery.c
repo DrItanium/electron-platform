@@ -26,14 +26,12 @@
 #include <stdio.h>
 #include <setup.h>
 #include <clips.h>
-#include <efssrv.h>
 
 
 int main(int argc, char *argv[]) {
    void *theEnv;
 
    theEnv = CreateEnvironment();
-   DefineFSOverrideFunctions(theEnv); 
    RerouteStdin(theEnv,argc,argv);
    CommandLoop(theEnv);
 

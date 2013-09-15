@@ -30,8 +30,9 @@ SRC = agenda.c analysis.c argacces.c bload.c bmathfun.c bsave.c \
  	ruledlt.c rulelhs.c rulepsr.c scanner.c sortfun.c strngfun.c \
  	strngrtr.c symblbin.c symblcmp.c symbol.c sysdep.c textpro.c \
  	tmpltbin.c tmpltbsc.c tmpltcmp.c tmpltdef.c tmpltfun.c tmpltlhs.c \
- 	tmpltpsr.c tmpltrhs.c tmpltutl.c userdata.c userfunctions.c \
- 	utility.c watch.c binops.c arch.c shellvar.c 
+ 	tmpltpsr.c tmpltrhs.c tmpltutl.c userdata.c utility.c watch.c \
+	binops.c arch.c shellvar.c 
+
 OBJ = ${SRC:.c=.o}
 
 .PHONY: clean all

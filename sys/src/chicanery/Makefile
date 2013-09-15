@@ -3,7 +3,7 @@
 
 include config.mk
 
-SRC = chicanery.c reroute.c
+SRC = chicanery.c reroute.c userfunctions.c
 OBJ = ${SRC:.c=.o}
 
 
