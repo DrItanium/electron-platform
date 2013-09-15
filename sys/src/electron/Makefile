@@ -45,7 +45,7 @@ libraries: ${OBJ}
 	@echo Building libelectron.so
 	@${LD} ${LDFLAGS} -shared -o libelectron.so ${OBJ} -lm -lrt
 
-install:
+install: libraries
 	@echo Installing libraries to ${PREFIX}/lib
 	@mkdir -p ${PREFIX}/lib
 	@cp libelectron.so ${PREFIX}/lib
