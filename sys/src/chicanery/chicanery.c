@@ -24,7 +24,6 @@
  */
 
 #include <stdio.h>
-#include <setup.h>
 #include <clips.h>
 
 
