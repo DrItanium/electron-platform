@@ -1,6 +1,5 @@
 ;-----------------------------------------------------------------------------
 ; System Commands (facts and rules)
-; System commands are unique but also 
 ;-----------------------------------------------------------------------------
 (deffacts SystemCommands
           ; req   action  req  aliases
@@ -12,6 +11,9 @@
           (defaction  help    <- )
           )
 
+(deffacts developer-system-commands 
+          (defaction facts <-)
+          (defaction rules <-))
 (defrule act:sys:quit
          (message (action stages)
                   (contents act $?))
@@ -25,7 +27,25 @@
          ?f <- (statement (action save)
                           (operands ?save))
          =>
-         (format werror "ERROR: save functionality not implemented yet!%n")
+         (format t "ERROR: save functionality not implemented yet!%n")
+         (retract ?f))
+
+(defrule act:sys:save:too-many-args
+         (message (action stages)
+                  (contents act $?))
+         ?f <- (statement (action save)
+                          (operands ? ? $?))
+         =>
+         (format t "Too many arguments provided to save, need exactly one!%n")
+         (retract ?f))
+
+(defrule act:sys:save:no-operands
+         (message (action stages)
+                  (contents act $?))
+         ?f <- (statement (action save)
+                          (operands))
+         =>
+         (format t "Save requires a path%n")
          (retract ?f))
 
 (defrule act:sys:load
@@ -34,16 +54,34 @@
          ?f <- (statement (action load)
                           (operands ?load))
          =>
-         (format werror "ERROR: load functionality not implemented yet!%n")
+         (format t "ERROR: load functionality not implemented yet!%n")
+         (retract ?f))
+
+(defrule act:sys:load:no-operands
+         (message (action stages)
+                  (contents act $?))
+         ?f <- (statement (action load)
+                          (operands))
+         =>
+         (format t "Save requires a path%n")
+         (retract ?f))
+
+(defrule act:sys:load:too-many-args
+         (message (action stages)
+                  (contents act $?))
+         ?f <- (statement (action load)
+                          (operands ? ? $?))
+         =>
+         (format t "Too many arguments provided to load, need exactly one!%n")
          (retract ?f))
 
 (defrule act:sys:man
          (message (action stages)
                   (contents act $?))
          ?f <- (statement (action man)
-                          (operands ?man))
+                          (operands ?index))
          =>
-         (format werror "ERROR: man functionality not implemented yet!%n")
+         (format t "ERROR: man functionality not implemented yet!%n")
          (retract ?f))
 
 (defrule act:sys:about
@@ -57,10 +95,26 @@
                    "Architecture: " (architecture) crlf))
 
 (defrule act:sys:restart
- (message (action stages)
-  (contents act $?))
- ?f <- (statement (action restart))
- =>
- (retract ?f)
- (reset))
+         (message (action stages)
+                  (contents act $?))
+         ?f <- (statement (action restart))
+         =>
+         (retract ?f)
+         (reset))
+(defrule act:sys:facts
+         (message (action stages)
+                  (contents act $?))
+         ?f <- (statement (action facts))
+         =>
+         (retract ?f)
+         (facts))
+(defrule act:sys:rules
+         (message (action stages)
+                  (contents act $?))
+         ?f <- (statement (action rules))
+         =>
+         (retract ?f)
+         (rules))
+)
+
 
