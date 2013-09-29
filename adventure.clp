@@ -68,6 +68,5 @@
 ; possible to even make
 
 ; Should always be the last line
-(watch rules)
 (batch* /lib/sys/chunks/reset-run-exit.clp)
 
