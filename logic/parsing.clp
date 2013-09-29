@@ -21,6 +21,11 @@
                    (default ?NONE))
              (multislot aliases
                         (type LEXEME)))
+(deftemplate statement
+             (slot action
+                   (type SYMBOL)
+                   (default ?NONE))
+             (multislot operands))
 
 ;-----------------------------------------------------------------------------
 ; Setup
@@ -82,10 +87,12 @@
          (message (action stages)
                   (contents parse $?))
          ?f <- (message (action input)
-                        (from ?)
+                        (from ?end)
                         (contents))
          =>
-         (retract ?f))
+         (modify ?f (action statement)
+                 (from 1)
+                 (to ?end)))
 
 
 ;-----------------------------------------------------------------------------
@@ -103,6 +110,7 @@
 ; ones that do nothing)
 ;-----------------------------------------------------------------------------
 (defrule tag-type:direct-command
+         (declare (salience 4))
          (message (action stages)
                   (contents parse $?))
          ?f <- (token (value ?z)
@@ -113,6 +121,7 @@
          (modify ?f (type ?c)))
 
 (defrule tag-type:indirect-command
+         (declare (salience 4))
          (message (action stages)
                   (contents parse $?))
          ?f <- (token (value ?z)
@@ -124,6 +133,52 @@
          =>
          (modify ?f (value ?q)
                  (type ?c)))
+(defrule tag-type:number
+         (declare (salience 3))
+         (message (action stages)
+                  (contents parse $?))
+         ?f <- (token (value ?z)
+                      (type unknown))
+         (test (numberp ?z))
+         =>
+         (modify ?f (type number)))
 
-; put these last
+(defrule tag-type:lexeme
+         (declare (salience 3))
+         (message (action stages)
+                  (contents parse $?))
+         ?f <- (token (value ?z)
+                      (type unknown))
+         (test (lexemep ?z))
+         =>
+         (modify ?f (type lexeme)))
+
+(defrule reconstitute-into-statement
+         (message (action stages)
+                  (contents parse $?))
+         ?f <- (message (action statement)
+                        (from ?a)
+                        (to ?b&:(>= ?b ?a))
+                        (contents $?contents))
+         (token (index ?a)
+                (type ?c))
+         =>
+         (modify ?f (from (+ ?a 1))
+                    (contents $?contents ?c)))
+
+(defrule finished-reconstitution
+         (message (action stages)
+                  (contents parse $?))
+         ?f <- (message (action statement)
+                        (from ?a)
+                        (to ?a)
+                        (contents $?symbols))
+         =>
+         ; Now we need to determine what the hell this line is actually
+         ; requesting
+         (modify ?f (action resolve-statement)
+                    (from 1))
+
+ 
+; command declarations go last
 (batch* /logic/cmd/system.clp)
