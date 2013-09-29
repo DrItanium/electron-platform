@@ -1,6 +1,9 @@
 ; This does semi-nlp on the input from the prompt
 ; The nice thing is that the form I expect things is quite flexible but
-; there is some order to it
+; there is some order to it. For instance, the inputs will always go
+; <action> <operand> <to/on/at> <operand>
+; <action> <operand> 
+; <action> 
 
 (deftemplate token 
              (slot index
@@ -13,9 +16,6 @@
                    (type SYMBOL)
                    (default unknown)))
 (deftemplate action
-             (slot class
-                   (type SYMBOL)
-                   (default ?NONE))
              (slot action
                    (type LEXEME)
                    (default ?NONE))
@@ -33,7 +33,7 @@
 (defrule init:define-actions
          (message (action stages)
                   (contents init $?))
-         ?f <- (defaction ?class ?action <- $?aliases) 
+         ?f <- (defaction ?action <- $?aliases) 
          =>
          (retract ?f)
          (assert (action 
@@ -115,10 +115,9 @@
                   (contents parse $?))
          ?f <- (token (value ?z)
                       (type unknown))
-         (action (action ?z)
-                 (class ?c))
+         (action (action ?z))
          =>
-         (modify ?f (type ?c)))
+         (modify ?f (type action)))
 
 (defrule tag-type:indirect-command
          (declare (salience 4))
@@ -128,11 +127,10 @@
                       (type unknown))
          (not (exists (action (action ?z))))
          (action (aliases $? ?z $?)
-                 (action ?q)
-                 (class ?c))
+                 (action ?q))
          =>
          (modify ?f (value ?q)
-                 (type ?c)))
+                 (type action)))
 (defrule tag-type:number
          (declare (salience 3))
          (message (action stages)
@@ -164,7 +162,7 @@
                 (type ?c))
          =>
          (modify ?f (from (+ ?a 1))
-                    (contents $?contents ?c)))
+                 (contents $?contents ?c)))
 
 (defrule finished-reconstitution
          (message (action stages)
@@ -176,9 +174,28 @@
          =>
          ; Now we need to determine what the hell this line is actually
          ; requesting
-         (modify ?f (action resolve-statement)
-                    (from 1))
+         (modify ?f (action check-statement)
+                 (from 1)))
 
- 
+(defrule check-statement:starts-with-action
+         "Inputs always start with the action to be performed" 
+         (message (action stages)
+                  (contents parse $?))
+         ?f <- (message (action check-statement)
+                        (contents action $?rest))
+         =>
+         )
+
+(defrule check-statement:does-not-start-with-action
+         (message (action stages)
+                  (contents parse $?))
+         ?f <- (message (action check-statement)
+                        (from ?j)
+                        (to ?k)
+                        (contents ~action $?rest))
+         =>
+         ; we need to clear out the tokens and print a message saying unknown
+         ; action or something similar
+         )
 ; command declarations go last
 (batch* /logic/cmd/system.clp)

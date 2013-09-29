@@ -3,13 +3,13 @@
 ; System commands are unique but also 
 ;-----------------------------------------------------------------------------
 (deffacts SystemCommands
-          ; req   class action  req  aliases
-          (defaction sys   quit    <- )
-          (defaction sys   save    <- )
-          (defaction sys   load    <- )
-          (defaction sys   restart <- )
-          (defaction sys   about   <- )
-          (defaction sys   help    <-  )
+          ; req   action  req  aliases
+          (defaction  quit    <- )
+          (defaction  save    <- )
+          (defaction  load    <- )
+          (defaction  restart <- )
+          (defaction  about   <- )
+          (defaction  help    <- )
           )
 
 (defrule act:sys:quit

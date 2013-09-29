@@ -53,7 +53,7 @@
                   (contents prompt $?))
          =>
          (format t "%s " ?*prompt-symbol*)
-         (bind ?tokens (explode$ (readline)))
+         (bind ?tokens (explode$ (lowcase (readline))))
          (assert (message (action input)
                           (from 1)
                           (contents ?tokens))))
