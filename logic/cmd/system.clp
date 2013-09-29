@@ -11,9 +11,6 @@
           (defaction  help    <- )
           )
 
-(deffacts developer-system-commands 
-          (defaction facts <-)
-          (defaction rules <-))
 (defrule act:sys:quit
          (message (action stages)
                   (contents act $?))
@@ -101,20 +98,3 @@
          =>
          (retract ?f)
          (reset))
-(defrule act:sys:facts
-         (message (action stages)
-                  (contents act $?))
-         ?f <- (statement (action facts))
-         =>
-         (retract ?f)
-         (facts))
-(defrule act:sys:rules
-         (message (action stages)
-                  (contents act $?))
-         ?f <- (statement (action rules))
-         =>
-         (retract ?f)
-         (rules))
-)
-
-
