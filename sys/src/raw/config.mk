@@ -6,11 +6,15 @@ VERSION = 9
 # paths
 PREFIX = ${ELECTRON_PLATFORM_ROOT}/sys
 
+include ${PREFIX}/src/common/config.mk
+
 # includes and libs
 INCS = -I. -I${PREFIX}/include -I/usr/include 
 LIBS = -L/usr/lib -lc -lm -lrt ${PREFIX}/lib/libelectron.a
 
-CFLAGS = -Os ${INCS} -DVERSION=\"${VERSION}\" 
+DEFS += -DVERSION=\"${VERSION}\"
+
+CFLAGS = -Os ${INCS} ${DEFS}
 LDFLAGS = ${LIBS}
 
 # compiler and linker
