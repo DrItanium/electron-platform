@@ -1,0 +1,13 @@
+;-----------------------------------------------------------------------------
+; Tokens are processed specially by different rules which represent different
+; items and such. Generally speaking it is necessary to do this using as
+; simple and independent of rules as possible. Then we can do checks after
+; the fact to make sure of things but generally speaking we don't want to
+; have too complex of rules. We just match up the different tokens to things
+; to see if we have something meaningful and if we do then we simplify it 
+; to a form that makes it easy to define rooms, commands, and such through
+; the rete network itself only storing state as needed. Each room is actually
+; a set of stimuli/hooks that the program responds to. In fact, save games
+; should consist solely of parsed output that is run in a non-interactive
+; version of the game until all commands have been executed (yes even the
+; ones that do nothing)
