@@ -38,13 +38,12 @@
 (defrule startup
          (declare (salience 10000))
          (initial-fact)
-
          =>
          (printout t "Welcome to adventure." crlf)
          (printout t "Please enter your name: ")
          (bind ?name (readline))
          (assert (message (action stages)
-                          (contents ?*stages*)))
+                          (contents init ?*stages*)))
          (make-instance of player 
                         (player-name ?name))
          )
