@@ -96,5 +96,6 @@
 ;-----------------------------------------------------------------------------
 ; command declarations go last
 ;-----------------------------------------------------------------------------
+(batch* /logic/cmd/man.clp)
 (batch* /logic/cmd/system.clp)
 (if ?*in-development* then (batch* /logic/cmd/dev.clp))

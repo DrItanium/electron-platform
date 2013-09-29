@@ -8,7 +8,6 @@
           (defaction  load    <- )
           (defaction  restart <- )
           (defaction  about   <- )
-          (defaction  help    <- )
           )
 
 (defrule act:sys:quit
@@ -70,15 +69,6 @@
                           (operands ? ? $?))
          =>
          (format t "Too many arguments provided to load, need exactly one!%n")
-         (retract ?f))
-
-(defrule act:sys:man
-         (message (action stages)
-                  (contents act $?))
-         ?f <- (statement (action man)
-                          (operands ?index))
-         =>
-         (format t "ERROR: man functionality not implemented yet!%n")
          (retract ?f))
 
 (defrule act:sys:about
