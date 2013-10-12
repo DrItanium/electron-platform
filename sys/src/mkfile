@@ -1,11 +1,12 @@
 <$PLAN9/src/mkhdr
-# hoodwink is the version of electron that uses plan9port
-TARG=hoodwink
+# chicanery is the version of electron that uses plan9port
+TARG=chicanery
 BIN=$ELECTRON_PLATFORM_ROOT/sys/bin
 LDFLAGS="-lrt -lm -lc -L/usr/lib"
 CFLAGS=-Os -I$ELECTRON_PLATFORM_ROOT/sys/include -I/usr/include
 LIBELECTRON=$ELECTRON_PLATFORM_ROOT/sys/src/electron/
 LIBEFSSRV=$ELECTRON_PLATFORM_ROOT/sys/src/srv/efs/
+
 OFILES=\
    $LIBELECTRON/agenda.$O\
    $LIBELECTRON/analysis.$O\
