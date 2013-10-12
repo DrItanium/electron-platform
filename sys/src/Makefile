@@ -9,8 +9,8 @@ install:
 	@cd cmd/raw && ${MAKE} install 
 	@echo Installing srv/efs 
 	@cd srv/efs && ${MAKE} install
-	@echo Installing chicanery shell
-	@cd cmd/chicanery && ${MAKE} install
+	@echo Installing platform shell
+	@cd cmd/platform && ${MAKE} install
 
 
 clean:
@@ -20,8 +20,8 @@ clean:
 	@cd cmd/raw && ${MAKE} clean 
 	@echo Cleaning srv/efs 
 	@cd srv/efs && ${MAKE} clean
-	@echo Cleaning chicanery shell
-	@cd cmd/chicanery && ${MAKE} clean
+	@echo Cleaning platform shell
+	@cd cmd/platform && ${MAKE} clean
 
 uninstall:
 	@echo Uninstalling electron core
@@ -30,5 +30,5 @@ uninstall:
 	@cd cmd/raw && ${MAKE} uninstall 
 	@echo Uninstalling srv/efs 
 	@cd srv/efs && ${MAKE} uninstall
-	@echo Uninstalling chicanery shell
-	@cd cmd/chicanery && ${MAKE} uninstall
+	@echo Uninstalling platform shell
+	@cd cmd/platform && ${MAKE} uninstall
