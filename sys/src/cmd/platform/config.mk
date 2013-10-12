@@ -1,4 +1,4 @@
-# chicanery version
+# platform version
 VERSION = 9
 
 
