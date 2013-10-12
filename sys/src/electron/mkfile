@@ -259,7 +259,6 @@ HFILES=\
    globlcom.h\
    globldef.h\
    globlpsr.h\
-   HardwareDetection.h\
    immthpsr.h\
    incrrset.h\
    inherpsr.h\
