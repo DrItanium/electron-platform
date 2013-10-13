@@ -1,11 +1,16 @@
 <$PLAN9/src/mkhdr
+# chicanery is the version of electron that uses plan9port
+TARG=chicanery
 BIN=$ELECTRON_PLATFORM_ROOT/sys/bin
 LDFLAGS="-lrt -lm -lc -L/usr/lib"
 CFLAGS=-Os -I$ELECTRON_PLATFORM_ROOT/sys/include -I/usr/include
 LIBELECTRON=$ELECTRON_PLATFORM_ROOT/sys/src/electron
 LIBEFSSRV=$ELECTRON_PLATFORM_ROOT/sys/src/srv/efs
-DIRS = electron\
-       srv/efs\
-       cmd/chicanery\
+LIB=$LIBELECTRON/libelectron9.a $LIBEFSSRV/libefssrv9.a
 
-<$PLAN9/src/mkdirs
+OFILES=\
+       chicanery.$O\
+       reroute.$O\
+       userfunctions.$O\
+
+<$PLAN9/src/mkone
