@@ -10,11 +10,11 @@
 #define BUTTON3 (char*)"button3"
 static int mouseInitialized = 0;
 static int StartupMouse(void* theEnv);
-static void GetMouseButtons(void* theEnv, DATA_OBJECT_PTR returnValuePtr);
+static int GetMouseButtons(void* theEnv);
 static void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr);
 static uvlong GetMouseTimeStamp(void* theEnv);
 static int QueryMouse(void* theEnv);
-static Mouse mouse;
+static Mouse m;
 
 void InitializeMouseInterface(void* theEnv) {
    EnvDefineFunction2(theEnv,
@@ -31,7 +31,7 @@ void InitializeMouseInterface(void* theEnv) {
          (char*)"00a");
    EnvDefineFunction2(theEnv,
          (char*)"mouse/buttons",
-         'm',
+         'i',
          PTIEF GetMouseButtons,
          (char*)"GetMouseButtons",
          (char*)"00a");
@@ -68,16 +68,16 @@ int StartupMouse(void* theEnv) {
    }
 }
 int QueryMouse(void* theEnv) {
-   mouse = emouse();
-   return TRUE;
+   if(ecanmouse()) {
+      m = emouse();
+      return TRUE;
+   } else  {
+      return FALSE;
+   }
+
 }
 
-void GetMouseButtons(void* theEnv, DATA_OBJECT_PTR returnValuePtr) {
-   void* multifield;
-   int length;
-
-   multifield = EnvCreateMultifield(theEnv, 8);
-   /* query the mouse */
+int GetMouseButtons(void* theEnv) {
    /*
     * Mouse combinations
     * m.buttons & 1 => left-click
@@ -89,48 +89,7 @@ void GetMouseButtons(void* theEnv, DATA_OBJECT_PTR returnValuePtr) {
     * m.buttons & 7 => left + middle + right
     *
     */
-#define AddButton(index,symb) \
-   SetMFType(multifield,index,SYMBOL);\
-   SetMFValue(multifield,index,EnvAddSymbol(theEnv, symb))
-   if(mouse.buttons & 1) { 
-      length = 1;
-      AddButton(1,BUTTON1);
-   } else if(mouse.buttons & 2) {
-      length = 1;
-      AddButton(1,BUTTON2);
-   } else if(mouse.buttons & 3) {
-      length = 2;
-      AddButton(1, BUTTON1);
-      AddButton(2, BUTTON2);
-   } else if(mouse.buttons & 4) {
-      length = 1;
-      AddButton(1, BUTTON3);
-   } else if(mouse.buttons & 5) {
-      length = 2;
-      AddButton(1, BUTTON1);
-      AddButton(2, BUTTON3);
-   } else if(mouse.buttons & 6) {
-      length = 2; 
-      AddButton(1, BUTTON2);
-      AddButton(2, BUTTON3);
-   } else if(mouse.buttons & 7) {
-      length = 3;
-      AddButton(1, BUTTON1);
-      AddButton(2, BUTTON2);
-      AddButton(3, BUTTON3);
-   } else {
-      length = 0;
-   }
-#undef AddButton
-
-   if (length > 0) {
-      SetpType(returnValuePtr, MULTIFIELD);
-      SetpValue(returnValuePtr, multifield);
-      SetpDOBegin(returnValuePtr, 1);
-      SetpDOEnd(returnValuePtr, length);
-   } else {
-      SetMultifieldErrorValue(returnValuePtr);
-   }
+   return m.buttons;
 }
 
 void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr) {
@@ -138,14 +97,16 @@ void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr) {
 
    multifield = EnvCreateMultifield(theEnv, 2);
    SetMFType(multifield, 1, INTEGER);
-   SetMFValue(multifield, 1, EnvAddLong(theEnv, mouse.xy.x));
+   SetMFValue(multifield, 1, EnvAddLong(theEnv, m.xy.x));
    SetMFType(multifield, 2, INTEGER);
-   SetMFValue(multifield, 2, EnvAddLong(theEnv, mouse.xy.y));
+   SetMFValue(multifield, 2, EnvAddLong(theEnv, m.xy.y));
 
    SetpType(returnValuePtr, MULTIFIELD);
    SetpValue(returnValuePtr, multifield);
+   SetpDOBegin(returnValuePtr, 1);
+   SetpDOEnd(returnValuePtr, 2);
 }
 
 uvlong GetMouseTimeStamp(void* theEnv) {
-   return (uvlong)mouse.msec;
+   return (uvlong)m.msec;
 }
