@@ -70,7 +70,6 @@ void UserFunctions() {
 /***********************************************************/
 void EnvUserFunctions(void *theEnv) {
    DefineFSOverrideFunctions(theEnv);
-   InitializeMouseInterface(theEnv);
-
+   InitializeEventSystem(theEnv);
 }
 

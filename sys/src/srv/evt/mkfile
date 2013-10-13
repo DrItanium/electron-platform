@@ -6,6 +6,9 @@ CFLAGS=-Os -I$ELECTRON_PLATFORM_ROOT/sys/include -I/usr/include
 
 OFILES=\
        mouse.$O\
+       draw.$O\
+       evt.$O\
+
 
 HFILES=\
       evt.h\
