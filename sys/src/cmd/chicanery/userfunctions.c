@@ -42,8 +42,8 @@
 /***************************************************************************/
 
 #include <clips.h>
-#include <efssrv.h>
-#include <evt.h>
+#include <srv/efs.h>
+#include <srv/evt.h>
 void UserFunctions(void);
 void EnvUserFunctions(void *);
 

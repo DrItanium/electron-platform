@@ -3,7 +3,7 @@
 #include <draw.h>
 #include <event.h>
 #include <clips.h>
-#include <evt.h>
+#include <srv/evt.h>
 
 static int CallInitDraw(void* theEnv);
 static void CallEResized(void* theEnv);

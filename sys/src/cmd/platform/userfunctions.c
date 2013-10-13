@@ -42,7 +42,7 @@
 /***************************************************************************/
 
 #include <clips.h>
-#include <efssrv.h>
+#include <srv/efs.h>
 void UserFunctions(void);
 void EnvUserFunctions(void *);
 
