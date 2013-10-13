@@ -7,4 +7,8 @@ CFLAGS=-Os -I$ELECTRON_PLATFORM_ROOT/sys/include -I/usr/include
 OFILES=\
        mouse.$O\
 
+HFILES=\
+      evt.h\
+
+
 <$PLAN9/src/mklib

@@ -2,9 +2,8 @@
 #include <libc.h>
 #include <draw.h>
 #include <event.h>
-#include <setup.h>
-#include <multifld.h>
-#include "evt.h"
+#include <clips.h>
+#include <evt.h>
 
 #define BUTTON1 (char*)"button1"
 #define BUTTON2 (char*)"button2"
@@ -16,6 +15,7 @@ static void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr);
 static uvlong GetMouseTimeStamp(void* theEnv);
 static int QueryMouse(void* theEnv);
 static Mouse mouse;
+
 void InitializeMouseInterface(void* theEnv) {
    StartupMouse();
    EnvDefineFunction2(theEnv,
@@ -42,6 +42,15 @@ void InitializeMouseInterface(void* theEnv) {
          PTIEF GetMouseTimeStamp,
          (char*)"GetMouseTimeStamp",
          (char*)"00a");
+}
+
+void eresized(int new) {
+   // When eresized is called, we get a fact into the expert system
+   if(new) {
+      EnvAssertString(GetCurrentEnvironment(), "(event resized new TRUE)");
+   } else {
+      EnvAssertString(GetCurrentEnvironment(), "(event resized new FALSE)");
+   }
 }
 
 void StartupMouse() {

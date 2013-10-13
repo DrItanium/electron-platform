@@ -43,6 +43,7 @@
 
 #include <clips.h>
 #include <efssrv.h>
+#include <evt.h>
 void UserFunctions(void);
 void EnvUserFunctions(void *);
 
@@ -68,6 +69,8 @@ void UserFunctions() {
 /*   included in another file.                             */
 /***********************************************************/
 void EnvUserFunctions(void *theEnv) {
-   DefineFSOverrideFunctions(theEnv); 
+   DefineFSOverrideFunctions(theEnv);
+   InitializeMouseInterface(theEnv);
+
 }
 
