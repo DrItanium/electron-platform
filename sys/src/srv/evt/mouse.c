@@ -9,7 +9,7 @@
 #define BUTTON2 (char*)"button2"
 #define BUTTON3 (char*)"button3"
 static int mouseInitialized = 0;
-static void StartupMouse();
+static int StartupMouse(void* theEnv);
 static void GetMouseButtons(void* theEnv, DATA_OBJECT_PTR returnValuePtr);
 static void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr);
 static uvlong GetMouseTimeStamp(void* theEnv);
@@ -17,7 +17,12 @@ static int QueryMouse(void* theEnv);
 static Mouse mouse;
 
 void InitializeMouseInterface(void* theEnv) {
-   StartupMouse();
+   EnvDefineFunction2(theEnv,
+         (char*)"mouse/init",
+         'b',
+         PTIEF StartupMouse,
+         (char*) "StartupMouse",
+         (char*)"00a");
    EnvDefineFunction2(theEnv,
          (char*)"mouse/query",
          'b',
@@ -53,10 +58,13 @@ void eresized(int new) {
    }
 }
 
-void StartupMouse() {
+int StartupMouse(void* theEnv) {
    if(!mouseInitialized) {
       einit(Emouse);
       mouseInitialized = 1;
+      return TRUE;
+   } else {
+      return FALSE;
    }
 }
 int QueryMouse(void* theEnv) {
