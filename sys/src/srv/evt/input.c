@@ -8,21 +8,20 @@
 #define BUTTON1 (char*)"button1"
 #define BUTTON2 (char*)"button2"
 #define BUTTON3 (char*)"button3"
-static int mouseInitialized = 0;
-static int StartupMouse(void* theEnv);
+/* We init both keyboard and mouse */
+static int inputInitialized = 0;
 static int GetMouseButtons(void* theEnv);
 static void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr);
 static uvlong GetMouseTimeStamp(void* theEnv);
 static int QueryMouse(void* theEnv);
 static Mouse m;
 
-void InitializeMouseInterface(void* theEnv) {
-   EnvDefineFunction2(theEnv,
-         (char*)"mouse/init",
-         'b',
-         PTIEF StartupMouse,
-         (char*) "StartupMouse",
-         (char*)"00a");
+void InitializeInputSystem(void* theEnv) {
+   /* The input system should be automatically started on initialization */
+   if(!inputInitialized) {
+      einit(Emouse|Ekeyboard);
+      inputInitialized = 1;
+   }
    EnvDefineFunction2(theEnv,
          (char*)"mouse/query",
          'b',
@@ -47,6 +46,9 @@ void InitializeMouseInterface(void* theEnv) {
          PTIEF GetMouseTimeStamp,
          (char*)"GetMouseTimeStamp",
          (char*)"00a");
+   /* put the keyboard query into a router */
+   
+
 }
 
 void eresized(int new) {
@@ -58,15 +60,6 @@ void eresized(int new) {
    }
 }
 
-int StartupMouse(void* theEnv) {
-   if(!mouseInitialized) {
-      einit(Emouse);
-      mouseInitialized = 1;
-      return TRUE;
-   } else {
-      return FALSE;
-   }
-}
 int QueryMouse(void* theEnv) {
    if(ecanmouse()) {
       m = emouse();

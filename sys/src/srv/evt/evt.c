@@ -2,5 +2,5 @@
 
 void InitializeEventSystem(void* theEnv) {
    InitializeDrawSystem(theEnv);
-   InitializeMouseInterface(theEnv);
+   InitializeInputSystem(theEnv);
 }

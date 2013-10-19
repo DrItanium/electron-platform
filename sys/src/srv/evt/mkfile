@@ -5,7 +5,7 @@ LDFLAGS="-lrt -lm -lc -L/usr/lib"
 CFLAGS=-Os -I$ELECTRON_PLATFORM_ROOT/sys/include -I/usr/include
 
 OFILES=\
-       mouse.$O\
+       input.$O\
        draw.$O\
        evt.$O\
 
