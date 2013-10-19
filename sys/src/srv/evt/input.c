@@ -14,14 +14,18 @@ static int GetMouseButtons(void* theEnv);
 static void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr);
 static uvlong GetMouseTimeStamp(void* theEnv);
 static int QueryMouse(void* theEnv);
+static int QueryKeyboard(void* theEnv);
+static int StartupInput(void* theEnv);
 static Mouse m;
 
 void InitializeInputSystem(void* theEnv) {
    /* The input system should be automatically started on initialization */
-   if(!inputInitialized) {
-      einit(Emouse|Ekeyboard);
-      inputInitialized = 1;
-   }
+   EnvDefineFunction2(theEnv,
+         (char*)"input/init",
+         'b',
+         PTIEF StartupInput,
+         (char*)"StartupInput",
+         "00a");
    EnvDefineFunction2(theEnv,
          (char*)"mouse/query",
          'b',
@@ -46,8 +50,15 @@ void InitializeInputSystem(void* theEnv) {
          PTIEF GetMouseTimeStamp,
          (char*)"GetMouseTimeStamp",
          (char*)"00a");
-   /* put the keyboard query into a router */
-   
+   /* Router system does not support runes but chars! */
+   EnvDefineFunction2(theEnv,
+         (char*)"kbd/query",
+         'i',
+         PTIEF QueryKeyboard,
+         (char*)"QueryKeyboard",
+         (char*)"00a");
+
+
 
 }
 
@@ -60,6 +71,22 @@ void eresized(int new) {
    }
 }
 
+int StartupInput(void* theEnv) {
+   if(!inputInitialized) {
+      einit(Emouse|Ekeyboard);
+      inputInitialized = 1;
+      return TRUE;
+   } else {
+      return FALSE;
+   }
+}
+int QueryKeyboard(void* theEnv) {
+   if(ecankbd()) {
+      return ekbd();
+   } else {
+      return -1;
+   }
+}
 int QueryMouse(void* theEnv) {
    if(ecanmouse()) {
       m = emouse();
