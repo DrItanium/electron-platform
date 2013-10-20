@@ -22,13 +22,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+#include <u.h>
+#include <libc.h>
+#include <draw.h>
+#include <event.h>
 #include <stdio.h>
 #include <clips.h>
 
 
 int main(int argc, char *argv[]) {
    void *theEnv;
+
+   /* Do this ahead of anything else so we don't have issues with
+    * initialization across multiple environments */
+   if(initdraw(0,0, "chicanery") < 0) {
+      sysfatal("initdraw failed: %r");
+      exits("initdraw");
+   }
+   einit(Ekeyboard|Emouse);
 
    theEnv = CreateEnvironment();
    RerouteStdin(theEnv,argc,argv);

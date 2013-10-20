@@ -8,7 +8,6 @@
 
 
 /* We init both keyboard and mouse */
-static int inputInitialized = 0;
 static int menuExternalAddressID; 
 static Mouse m;
 /* static functions */
@@ -17,7 +16,6 @@ static void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr);
 static uvlong GetMouseTimeStamp(void* theEnv);
 static int QueryMouse(void* theEnv);
 static int QueryKeyboard(void* theEnv);
-static int StartupInput(void* theEnv);
 
 /* Menu related operations */
 static void PrintMenuAddress(void*, char*, void*);
@@ -28,12 +26,6 @@ static int ShowMenu(void* theEnv);
 
 void InitializeInputSystem(void* theEnv) {
    /* The input system should be automatically started on initialization */
-   EnvDefineFunction2(theEnv,
-         (char*)"input/init",
-         'b',
-         PTIEF StartupInput,
-         (char*)"StartupInput",
-         "00a");
    EnvDefineFunction2(theEnv,
          (char*)"mouse/query",
          'b',
@@ -70,7 +62,7 @@ void InitializeInputSystem(void* theEnv) {
          'i',
          PTIEF ShowMenu,
          (char*)"ShowMenu",
-         (char*)"22aia");
+         (char*)"22aai");
 
    struct externalAddressType nullTerminatedList = {
       (char*)"menu",
@@ -85,24 +77,7 @@ void InitializeInputSystem(void* theEnv) {
    
 }
 
-void eresized(int new) {
-   // When eresized is called, we get a fact into the expert system
-   if(new) {
-      EnvAssertString(GetCurrentEnvironment(), "(event resized new TRUE)");
-   } else {
-      EnvAssertString(GetCurrentEnvironment(), "(event resized new FALSE)");
-   }
-}
 
-int StartupInput(void* theEnv) {
-   if(!inputInitialized) {
-      einit(Emouse|Ekeyboard);
-      inputInitialized = 1;
-      return TRUE;
-   } else {
-      return FALSE;
-   }
-}
 int QueryKeyboard(void* theEnv) {
    if(ecankbd()) {
       return ekbd();
@@ -210,9 +185,11 @@ void NewMenu(void* theEnv, DATA_OBJECT* retVal) {
    numberOfArguments = EnvRtnArgCount(theEnv);
    if(numberOfArguments > 1) {
       m = genalloc(theEnv, sizeof(Menu));
-      elements = genalloc(theEnv, sizeof(char*) * (numberOfArguments + 1));
+      elements = genalloc(theEnv, sizeof(char*) * (numberOfArguments));
       m->item = elements;
-      elements[numberOfArguments] = nil;
+      m->gen = 0;
+      m->lasthit = 0;
+      elements[numberOfArguments - 1] = 0;
       for(i = 0, j = 2; i < (numberOfArguments - 1); i++, j++) {
          /* we need to get the current entry and then copy it to make sure */
          if(EnvArgTypeCheck(theEnv, "new (plan9port menu)", j, SYMBOL_OR_STRING, &current) == FALSE) {
@@ -243,8 +220,12 @@ void NewMenu(void* theEnv, DATA_OBJECT* retVal) {
 static int ShowMenu(void* theEnv) {
    int button;
    Menu* menu; 
-
-  //TODO: Finish
-  return -1;
+   DATA_OBJECT arg;
+   if(EnvArgTypeCheck(theEnv, "menu/show", 1, EXTERNAL_ADDRESS, &arg) == FALSE) {
+      return -1;
+   }
+   menu = DOToExternalAddress(arg);
+   button = (int)EnvRtnLong(theEnv, 2);
+   return emenuhit(button, &m, menu);
 }
 

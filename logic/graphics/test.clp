@@ -1,5 +1,9 @@
 (defglobal MAIN
-           ?*system-initialized* = FALSE)
+           ?*system-initialized* = FALSE
+           ?*menu1-elements* = (create$ "cut" "copy" "paste")
+           ?*menu2-elements* = (create$ "eat" "sleep" "drink")
+           ?*menu1* = (new menu (expand$ ?*menu1-elements*))
+           ?*menu2* = (new menu (expand$ ?*menu2-elements*)))
 (deffacts query-operation
           (query input))
 (defgeneric translate/kbd/query)
@@ -44,8 +48,6 @@
          (initial-fact)
          =>
          (if (not ?*system-initialized*) then
-           (initdraw)
-           (input/init)
            (eresized 0)
            (bind ?*system-initialized* TRUE)))
 
@@ -57,6 +59,7 @@
            (exit)
            else
            (retract ?f)))
+
 (defrule query-input 
          ?f <- (query input)
          =>
@@ -72,8 +75,9 @@
 
 
 (defrule process-mouse-inputs
+        (declare (salience -1))
          ?f <- (input mouse
-                      buttons: $?z&:(not (member$ button3 ?z))
+                      buttons: $?
                       position: ? ?
                       time-stamp: ?)
          =>
@@ -81,16 +85,31 @@
          (assert (query mouse)))
 
 
-(defrule process-mouse-inputs:menu
+(defrule process-mouse-inputs:menu1
          ?f <- (input mouse 
-                      buttons: $? button3 $? 
+                      buttons: button3 
                       position: ? ?
                       time-stamp: ?)
          =>
          (retract ?f)
          ; Display a menu
-         (assert (query mouse))
-         )
+         (bind ?z (menu/show ?*menu1* 3))
+         (if (!= ?z -1) then
+          (printout t "Selected " (nth$ (+ ?z 1) ?*menu1-elements*) crlf))
+         (assert (query mouse)))
+
+(defrule process-mouse-inputs:menu2
+         ?f <- (input mouse 
+                      buttons: button2
+                      position: ? ?
+                      time-stamp: ?)
+         =>
+         (retract ?f)
+         ; Display a menu
+         (bind ?z (menu/show ?*menu2* 2))
+         (if (!= ?z -1) then
+          (printout t "Selected " (nth$ (+ ?z 1) ?*menu2-elements*) crlf))
+         (assert (query mouse)))
 
 
 (defrule process-keyboard-inputs:quit

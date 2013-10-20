@@ -5,17 +5,9 @@
 #include <clips.h>
 #include <srv/evt.h>
 
-static int CallInitDraw(void* theEnv);
 static void CallEResized(void* theEnv);
 static int CallGetWindow(void* theEnv);
-static int initdrawCalled = 0;
 void InitializeDrawSystem(void* theEnv) {
-   EnvDefineFunction2(theEnv,
-         (char*)"initdraw",
-         'b',
-         PTIEF CallInitDraw,
-         (char*)"CallInitDraw",
-         (char*)"00a");
 
    EnvDefineFunction2(theEnv,
          (char*)"eresized",
@@ -32,23 +24,19 @@ void InitializeDrawSystem(void* theEnv) {
          (char*)"00a");
 }
 
-int CallInitDraw(void* theEnv) {
-   if(!initdrawCalled) {
-      if(initdraw(0,0,"chicanery") < 0) {
-         sysfatal("initdraw failed: %r");
-      } else {
-         initdrawCalled = 1;
-         return TRUE;
-      }
-   } else {
-      return FALSE;
-   }
-}
-
 void CallEResized(void* theEnv) {
    eresized((int)EnvRtnLong(theEnv, 1));
 }
 
 int CallGetWindow(void* theEnv) {
    return getwindow(display, Refnone);
+}
+
+void eresized(int new) {
+   // When eresized is called, we get a fact into the expert system
+   if(new) {
+      EnvAssertString(GetCurrentEnvironment(), "(event resized new TRUE)");
+   } else {
+      EnvAssertString(GetCurrentEnvironment(), "(event resized new FALSE)");
+   }
 }
