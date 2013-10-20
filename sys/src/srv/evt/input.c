@@ -163,17 +163,21 @@ intBool DeallocateMenu(void* theEnv, void* theValue) {
    Menu *m;
    char** contents;
    char* tmp;
-   int length;
+   int length, i;
       
    if(theValue != NULL) {
       m = (Menu*)theValue;
       length = 0;
       contents = m->item;
-      for(; contents != 0; contents++, length++) {
-         tmp = *contents;
-         genfree(theEnv, (void*)tmp, strlen(tmp) + 1);
+      //HACK! HACK! Ensure that we know how long it is since we've lost that
+      //information
+      for(; contents != 0; contents++, length++);
+      length++; //include the null element at the end
+      for(i = 0; i < length; i++) {
+         tmp = (m->item)[i];
+         genfree(theEnv,(void*)tmp, strlen(tmp));
       }
-      genfree(theEnv, (void*)m->item, sizeof(char*) * (length + 1));
+      genfree(theEnv, (void*)m->item, sizeof(char*) * length);
       genfree(theEnv, (void*)m, sizeof(Menu));
    }
    return TRUE; 
@@ -189,7 +193,6 @@ void NewMenu(void* theEnv, DATA_OBJECT* retVal) {
    char* tmp;
    char* persist;
    DATA_OBJECT current;
-   char buffer[30];
 
    numberOfArguments = EnvRtnArgCount(theEnv);
    if(numberOfArguments > 1) {
@@ -207,16 +210,8 @@ void NewMenu(void* theEnv, DATA_OBJECT* retVal) {
             genfree(theEnv, (void *)m, sizeof(Menu));
             return;
          }
-         sprintf(buffer, "%d", j);
-         EnvPrintRouter(theEnv, WERROR, (char*)"j = ");
-         EnvPrintRouter(theEnv, WERROR, buffer);
-         EnvPrintRouter(theEnv, WERROR, (char*)"\n");
          tmp = DOToString(current);
          len = strlen(tmp);
-         sprintf(buffer, "%d", len);
-         EnvPrintRouter(theEnv, WERROR, (char*)"\tlen = ");
-         EnvPrintRouter(theEnv, WERROR, buffer);
-         EnvPrintRouter(theEnv, WERROR, (char*)"\n");
 
          persist = genalloc(theEnv, len + 1);
          gensprintf(persist, "%s", tmp);
