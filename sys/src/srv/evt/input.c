@@ -9,17 +9,23 @@
 
 /* We init both keyboard and mouse */
 static int inputInitialized = 0;
+static int menuExternalAddressID; 
+static Mouse m;
+/* static functions */
 static int GetMouseButtons(void* theEnv);
 static void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr);
 static uvlong GetMouseTimeStamp(void* theEnv);
 static int QueryMouse(void* theEnv);
 static int QueryKeyboard(void* theEnv);
 static int StartupInput(void* theEnv);
+
+/* Menu related operations */
 static void PrintMenuAddress(void*, char*, void*);
 static intBool DeallocateMenu(void*, void*);
 static void NewMenu(void*, DATA_OBJECT*);
-static Mouse m;
-static int menuExternalAddressID; 
+
+static int ShowMenu(void* theEnv);
+
 void InitializeInputSystem(void* theEnv) {
    /* The input system should be automatically started on initialization */
    EnvDefineFunction2(theEnv,
@@ -59,6 +65,13 @@ void InitializeInputSystem(void* theEnv) {
          PTIEF QueryKeyboard,
          (char*)"QueryKeyboard",
          (char*)"00a");
+   EnvDefineFunction2(theEnv,
+         (char*)"menu/show",
+         'i',
+         PTIEF ShowMenu,
+         (char*)"ShowMenu",
+         (char*)"22aia");
+
    struct externalAddressType nullTerminatedList = {
       (char*)"menu",
       PrintMenuAddress,
@@ -69,7 +82,7 @@ void InitializeInputSystem(void* theEnv) {
    };
 
    menuExternalAddressID = InstallExternalAddressType(theEnv, &nullTerminatedList);
-
+   
 }
 
 void eresized(int new) {
@@ -164,7 +177,7 @@ intBool DeallocateMenu(void* theEnv, void* theValue) {
    char** contents;
    char* tmp;
    int length, i;
-      
+
    if(theValue != NULL) {
       m = (Menu*)theValue;
       length = 0;
@@ -226,5 +239,12 @@ void NewMenu(void* theEnv, DATA_OBJECT* retVal) {
       SetEvaluationError(theEnv, TRUE);
       return;
    }
-
 }
+static int ShowMenu(void* theEnv) {
+   int button;
+   Menu* menu; 
+
+  //TODO: Finish
+  return -1;
+}
+
