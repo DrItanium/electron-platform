@@ -2,12 +2,11 @@
 #include <libc.h>
 #include <draw.h>
 #include <event.h>
+#include <cursor.h>
 #include <clips.h>
 #include <srv/evt.h>
 
-#define BUTTON1 (char*)"button1"
-#define BUTTON2 (char*)"button2"
-#define BUTTON3 (char*)"button3"
+
 /* We init both keyboard and mouse */
 static int inputInitialized = 0;
 static int GetMouseButtons(void* theEnv);
@@ -16,8 +15,11 @@ static uvlong GetMouseTimeStamp(void* theEnv);
 static int QueryMouse(void* theEnv);
 static int QueryKeyboard(void* theEnv);
 static int StartupInput(void* theEnv);
+static void PrintMenuAddress(void*, char*, void*);
+static intBool DeallocateMenu(void*, void*);
+static void NewMenu(void*, DATA_OBJECT*);
 static Mouse m;
-
+static int menuExternalAddressID; 
 void InitializeInputSystem(void* theEnv) {
    /* The input system should be automatically started on initialization */
    EnvDefineFunction2(theEnv,
@@ -57,8 +59,16 @@ void InitializeInputSystem(void* theEnv) {
          PTIEF QueryKeyboard,
          (char*)"QueryKeyboard",
          (char*)"00a");
+   struct externalAddressType nullTerminatedList = {
+      (char*)"menu",
+      PrintMenuAddress,
+      PrintMenuAddress,
+      DeallocateMenu,
+      NewMenu,
+      NULL
+   };
 
-
+   menuExternalAddressID = InstallExternalAddressType(theEnv, &nullTerminatedList);
 
 }
 
@@ -129,4 +139,96 @@ void GetMousePosition(void* theEnv, DATA_OBJECT_PTR returnValuePtr) {
 
 uvlong GetMouseTimeStamp(void* theEnv) {
    return (uvlong)m.msec;
+}
+
+void PrintMenuAddress(void* theEnv, char* logicalName, 
+      void* theValue) {
+   char buffer[20];
+   void* ptr;
+
+   EnvPrintRouter(theEnv, logicalName, 
+         (char*)"<Pointer-Menu-");
+   ptr = ValueToExternalAddress(theValue);
+   if(ptr) {
+      gensprintf(buffer, "%p", ptr);
+   } else {
+      gensprintf(buffer, "%p", theValue);
+   }
+   EnvPrintRouter(theEnv,logicalName, buffer);
+   EnvPrintRouter(theEnv,logicalName, (char*)">");
+
+}
+
+intBool DeallocateMenu(void* theEnv, void* theValue) {
+   Menu *m;
+   char** contents;
+   char* tmp;
+   int length;
+      
+   if(theValue != NULL) {
+      m = (Menu*)theValue;
+      length = 0;
+      contents = m->item;
+      for(; contents != 0; contents++, length++) {
+         tmp = *contents;
+         genfree(theEnv, (void*)tmp, strlen(tmp) + 1);
+      }
+      genfree(theEnv, (void*)m->item, sizeof(char*) * (length + 1));
+      genfree(theEnv, (void*)m, sizeof(Menu));
+   }
+   return TRUE; 
+}
+
+void NewMenu(void* theEnv, DATA_OBJECT* retVal) {
+   /* So we need to allocate a new list of elements. To do this we need
+    * to know what this list will consist of first */
+
+   int numberOfArguments, i, j, len;
+   Menu* m;
+   char** elements;
+   char* tmp;
+   char* persist;
+   DATA_OBJECT current;
+   char buffer[30];
+
+   numberOfArguments = EnvRtnArgCount(theEnv);
+   if(numberOfArguments > 1) {
+      m = genalloc(theEnv, sizeof(Menu));
+      elements = genalloc(theEnv, sizeof(char*) * (numberOfArguments + 1));
+      m->item = elements;
+      elements[numberOfArguments] = nil;
+      for(i = 0, j = 2; i < (numberOfArguments - 1); i++, j++) {
+         /* we need to get the current entry and then copy it to make sure */
+         if(EnvArgTypeCheck(theEnv, "new (plan9port menu)", j, SYMBOL_OR_STRING, &current) == FALSE) {
+            for(; i >= 0; i--) {
+               genfree(theEnv, (void*) elements[i], strlen(elements[i]));
+            }
+            genfree(theEnv, (void *)elements, sizeof(char*) * numberOfArguments);
+            genfree(theEnv, (void *)m, sizeof(Menu));
+            return;
+         }
+         sprintf(buffer, "%d", j);
+         EnvPrintRouter(theEnv, WERROR, (char*)"j = ");
+         EnvPrintRouter(theEnv, WERROR, buffer);
+         EnvPrintRouter(theEnv, WERROR, (char*)"\n");
+         tmp = DOToString(current);
+         len = strlen(tmp);
+         sprintf(buffer, "%d", len);
+         EnvPrintRouter(theEnv, WERROR, (char*)"\tlen = ");
+         EnvPrintRouter(theEnv, WERROR, buffer);
+         EnvPrintRouter(theEnv, WERROR, (char*)"\n");
+
+         persist = genalloc(theEnv, len + 1);
+         gensprintf(persist, "%s", tmp);
+         elements[i] = persist;
+      }
+      SetpType(retVal, EXTERNAL_ADDRESS);
+      SetpValue(retVal, EnvAddExternalAddress(theEnv, (void*)m, menuExternalAddressID));
+   } else {
+      PrintErrorID(theEnv, (char*)"NEW", 1, FALSE);
+      EnvPrintRouter(theEnv, WERROR, (char*)"Function new expected a list of names.\n");
+      SetEvaluationError(theEnv, TRUE);
+      return;
+   }
+
 }
