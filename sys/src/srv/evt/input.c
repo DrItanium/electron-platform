@@ -203,6 +203,7 @@ void NewMenu(void* theEnv, DATA_OBJECT* retVal) {
       for(i = 0, j = 2; i < (numberOfArguments - 1); i++, j++) {
          /* we need to get the current entry and then copy it to make sure */
          if(EnvArgTypeCheck(theEnv, "new (plan9port menu)", j, SYMBOL_OR_STRING, &current) == FALSE) {
+            i--; /* ensure that we don't free the uninitialized part */
             for(; i >= 0; i--) {
                genfree(theEnv, (void*) elements[i], strlen(elements[i]));
             }
