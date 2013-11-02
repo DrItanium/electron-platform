@@ -6,7 +6,7 @@ LIBELECTRON=$ELECTRON_PLATFORM_ROOT/sys/src/electron
 LIBEFSSRV=$ELECTRON_PLATFORM_ROOT/sys/src/srv/efs
 DIRS = electron\
        srv/efs\
-       srv/evt\
+       lib/evt\
        cmd/chicanery\
 
 <$PLAN9/src/mkdirs
