@@ -43,7 +43,7 @@
 
 #include <clips.h>
 #include <srv/efs.h>
-#include <srv/evt.h>
+#include <lib/evt.h>
 void UserFunctions(void);
 void EnvUserFunctions(void *);
 
