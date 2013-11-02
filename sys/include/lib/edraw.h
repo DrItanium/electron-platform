@@ -1,2 +1,2 @@
-/* edraw.h */
+/* edraw.c */
 extern void InitializeDrawRoutines(void* theEnv);
