@@ -199,6 +199,9 @@ void NewMenu(void* theEnv, DATA_OBJECT* retVal) {
             }
             genfree(theEnv, (void *)elements, sizeof(char*) * numberOfArguments);
             genfree(theEnv, (void *)m, sizeof(Menu));
+            PrintErrorID(theEnv, (char*)"NEW", 1, FALSE);
+            EnvPrintRouter(theEnv, WERROR, (char*)"Provided a non lexeme to new.\n");
+            SetEvaluationError(theEnv, TRUE);
             return;
          }
          tmp = DOToString(current);
