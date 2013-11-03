@@ -13,6 +13,7 @@ static intBool DeallocateImage(void*, void*);
 static void NewImage(void*, DATA_OBJECT*);
 
 static int Callrgb2cmap(void* theEnv);
+static int GetStandardColor(void* theEnv);
 
 void InitializeDrawRoutines(void* theEnv) {
    EnvDefineFunction2(theEnv,
@@ -21,6 +22,12 @@ void InitializeDrawRoutines(void* theEnv) {
          PTIEF Callrgb2cmap,
          (char*)"Callrgb2cmap",
          (char*)"33iiii");
+   EnvDefineFunction2(theEnv,
+         (char*)"get-standard-color",
+         'i',
+         PTIEF GetStandardColor,
+         (char*)"GetStandardColor",
+         (char*)"11ii");
    /* register the image type */
    struct externalAddressType image = {
       (char*)"Image",
@@ -32,6 +39,66 @@ void InitializeDrawRoutines(void* theEnv) {
    };
 
    imageExternalAddressID = InstallExternalAddressType(theEnv, &image);
+}
+int GetStandardColor(void* theEnv) {
+   switch((int)EnvRtnLong(theEnv, 1)) {
+      case 0:
+         return DOpaque;
+      case 1:
+         return DTransparent;
+      case 2:
+         return DBlack;
+      case 3:
+         return DWhite;
+      case 4:
+         return DRed;
+      case 5:
+         return DGreen;
+      case 6:
+         return DBlue;
+      case 7:
+         return DCyan;
+      case 8:
+         return DMagenta;
+      case 9:
+         return DYellow;
+      case 10:
+         return DPaleyellow;
+      case 11:
+         return DDarkyellow;
+      case 12:
+         return DDarkgreen;
+      case 13:
+         return DPalegreen;
+      case 14:
+         return DMedgreen;
+      case 15:
+         return DDarkblue;
+      case 16:
+         return DPalebluegreen;
+      case 17:
+         return DPaleblue;
+      case 18:
+         return DBluegreen;
+      case 19:
+         return DGreygreen;
+      case 20:
+         return DPalegreygreen;
+      case 21:
+         return DYellowgreen;
+      case 22:
+         return DMedblue;
+      case 23:
+         return DGreyblue;
+      case 24:
+         return DPalegreyblue;
+      case 25:
+         return DPurpleblue;
+      case 26:
+         return DNotacolor;
+      default:
+         return DNofill;
+   }
 }
 int Callrgb2cmap(void* theEnv) {
    int red, green, blue;
