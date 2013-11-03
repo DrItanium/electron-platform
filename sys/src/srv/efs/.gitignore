@@ -3,3 +3,4 @@
 config.h
 libefssrv.so
 libefssrv.a
+libefssrv9.a

@@ -1,0 +1,17 @@
+<$PLAN9/src/mkhdr
+
+LIB=libevt.a
+LDFLAGS="-lrt -lm -lc -L/usr/lib"
+CFLAGS=-Os -I$ELECTRON_PLATFORM_ROOT/sys/include -I/usr/include
+
+OFILES=\
+       input.$O\
+       draw.$O\
+       evt.$O\
+
+
+HFILES=\
+      evt.h\
+
+
+<$PLAN9/src/mklib

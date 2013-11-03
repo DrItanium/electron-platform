@@ -1,0 +1,15 @@
+<$PLAN9/src/mkhdr
+
+LIB=libedraw.a
+LDFLAGS="-lrt -lm -lc -L/usr/lib"
+CFLAGS=-Os -I$ELECTRON_PLATFORM_ROOT/sys/include -I/usr/include
+
+OFILES=\
+       edraw.$O\
+
+
+HFILES=\
+      edraw.h\
+
+
+<$PLAN9/src/mklib
