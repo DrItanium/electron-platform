@@ -12,7 +12,15 @@ static void PrintImageAddress(void*, char*, void*);
 static intBool DeallocateImage(void*, void*);
 static void NewImage(void*, DATA_OBJECT*);
 
+static int Callrgb2cmap(void* theEnv);
+
 void InitializeDrawRoutines(void* theEnv) {
+   EnvDefineFunction2(theEnv,
+         (char*)"rgb2cmap",
+         'i',
+         PTIEF Callrgb2cmap,
+         (char*)"Callrgb2cmap",
+         (char*)"33iiii");
    /* register the image type */
    struct externalAddressType image = {
       (char*)"Image",
@@ -25,7 +33,31 @@ void InitializeDrawRoutines(void* theEnv) {
 
    imageExternalAddressID = InstallExternalAddressType(theEnv, &image);
 }
-
+int Callrgb2cmap(void* theEnv) {
+   int red, green, blue;
+   red = (int)EnvRtnLong(theEnv, 1);
+   if(red > 255 || red < 0) {
+      PrintErrorID(theEnv, (char*)"CONVERSION", 1, FALSE);
+      EnvPrintRouter(theEnv, WERROR, (char*)"Red value is not between 0 and 255\n");
+      SetEvaluationError(theEnv, TRUE);
+      return -1;
+   }
+   green = (int)EnvRtnLong(theEnv, 2);
+   if(green > 255 || green < 0) {
+      PrintErrorID(theEnv, (char*)"CONVERSION", 1, FALSE);
+      EnvPrintRouter(theEnv, WERROR, (char*)"Green value is not between 0 and 255\n");
+      SetEvaluationError(theEnv, TRUE);
+      return -1;
+   }
+   blue = (int)EnvRtnLong(theEnv, 3);
+   if(blue > 255 || blue < 0) {
+      PrintErrorID(theEnv, (char*)"CONVERSION", 1, FALSE);
+      EnvPrintRouter(theEnv, WERROR, (char*)"Blue value is not between 0 and 255\n");
+      SetEvaluationError(theEnv, TRUE);
+      return -1;
+   }
+   return rgb2cmap(red, green, blue);
+}
 intBool DeallocateImage(void* theEnv, void* theValue) {
    if(theValue != NULL)
       freeimage((Image*)theValue);
