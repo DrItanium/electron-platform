@@ -44,6 +44,7 @@
 #include <clips.h>
 #include <srv/efs.h>
 #include <lib/evt.h>
+#include <lib/edraw.h>
 void UserFunctions(void);
 void EnvUserFunctions(void *);
 
@@ -71,5 +72,6 @@ void UserFunctions() {
 void EnvUserFunctions(void *theEnv) {
    DefineFSOverrideFunctions(theEnv);
    InitializeEventSystem(theEnv);
+   InitializeDrawRoutines(theEnv);
 }
 

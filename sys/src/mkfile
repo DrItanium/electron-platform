@@ -7,6 +7,7 @@ LIBEFSSRV=$ELECTRON_PLATFORM_ROOT/sys/src/srv/efs
 DIRS = electron\
        srv/efs\
        lib/evt\
+       lib/edraw\
        cmd/chicanery\
 
 <$PLAN9/src/mkdirs

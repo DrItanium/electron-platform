@@ -8,8 +8,9 @@ LIBELECTRON=$ELECTRON_PLATFORM_ROOT/sys/src/electron
 LIB=$ELECTRON_PLATFORM_ROOT/sys/src/lib
 LIBSRV=$ELECTRON_PLATFORM_ROOT/sys/src/srv
 LIBEFSSRV=$LIBSRV/efs
-LIBSRVEVT=$LIB/evt
-LIB=$LIBELECTRON/libelectron9.a $LIBEFSSRV/libefssrv9.a $LIBSRVEVT/libevt.a
+LIBEVT=$LIB/evt
+LIBEDRAW=$LIB/edraw
+LIB=$LIBELECTRON/libelectron9.a $LIBEFSSRV/libefssrv9.a $LIBEVT/libevt.a $LIBEDRAW/libedraw.a
 
 OFILES=\
        chicanery.$O\
