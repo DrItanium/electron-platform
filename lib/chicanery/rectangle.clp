@@ -1,7 +1,5 @@
 (defgeneric defrectangle)
 (defgeneric quickrect)
-(defglobal MAIN 
-           ?*rect:single-pixel* = (send (defrectangle rect:single-pixel 0 0 1 1) get-pointer))
 
 (defclass Rectangle
   (is-a Pointer)
@@ -34,10 +32,6 @@
                     (create$ ?self:x ?self:y ?self:bx ?self:by))
 
 
-(defmethod defrectangle
-  ((?name SYMBOL INSTANCE-NAME)
-   (?ptr EXTERNAL-ADDRESS))
-  (make-instance ?name of Rectangle 
 (defmethod defrectangle 
   "Creates a new rectangle object and corresponding pointer"
   ((?name SYMBOL INSTANCE-NAME)
@@ -71,5 +65,8 @@
   (quickrect (expand$ (subseq$ ?mf 1 4))))
 
 (defmethod quickrect
-  (($?mf MULTIFIELD INTEGER (>= (length$ ?mf 4))))
+  (($?mf MULTIFIELD INTEGER (>= (length$ ?mf) 4)))
   (quickrect ?mf))
+
+(defglobal MAIN 
+           ?*rect:single-pixel* = (send (defrectangle rect:single-pixel 0 0 1 1) get-pointer))

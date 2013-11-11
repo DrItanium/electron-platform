@@ -4,6 +4,7 @@
         (type EXTERNAL-ADDRESS)
         (access initialize-only)
         (storage local)
+        (visibility public)
         (default ?NONE))
   (slot pointer-class
         (type SYMBOL)
