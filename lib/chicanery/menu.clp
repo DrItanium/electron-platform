@@ -5,12 +5,10 @@
 (defgeneric defmenu)
 (defgeneric translate-menu-id)
 (defclass Menu
-  (is-a USER)
-  (slot pointer 
-        (type EXTERNAL-ADDRESS)
-        (access initialize-only)
-        (storage local)
-        (default ?NONE))
+  (is-a Pointer)
+  (slot pointer-class 
+        (source composite)
+        (default menu))
   (multislot menu-elements
              (type LEXEME)
              (storage local)
