@@ -1,0 +1,14 @@
+(defclass Pointer
+  (is-a USER)
+  (slot pointer 
+        (type EXTERNAL-ADDRESS)
+        (access initialize-only)
+        (storage local)
+        (default ?NONE))
+  (slot pointer-class
+        (type SYMBOL)
+        (storage shared)
+        (create-accessor read)
+        (visibility public)
+        (access read-only)
+        (default unknown)))
