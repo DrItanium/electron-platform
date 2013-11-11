@@ -1,5 +1,8 @@
 (defgeneric defrectangle)
 (defgeneric quickrect)
+(defgeneric defpixel)
+(defgeneric pixel:nxn)
+(defgeneric pixel:1x1)
 
 (defclass Rectangle
   (is-a Pointer)
@@ -67,6 +70,31 @@
 (defmethod quickrect
   (($?mf MULTIFIELD INTEGER (>= (length$ ?mf) 4)))
   (quickrect ?mf))
+
+(defmethod defpixel
+  ((?name SYMBOL INSTANCE-NAME)
+   (?x INTEGER)
+   (?y INTEGER)
+   (?factor INTEGER))
+  (defrectangle ?name ?x ?y (+ ?x ?factor) (+ ?y ?factor)))
+
+(defmethod pixel:nxn
+  ((?x INTEGER)
+   (?y INTEGER)
+   (?n INTEGER))
+  (quickrect ?x ?y (+ ?x ?n) (+ ?y ?n)))
+
+(defmethod pixel:nxn
+  ((?n INTEGER))
+  (pixel:nxn 0 0 ?n))
+
+(defmethod pixel:1x1
+  ((?x INTEGER)
+   (?y INTEGER))
+  (pixel:nxn ?x ?y 1))
+
+(defmethod pixel:1x1 () 
+  (pixel:1x1 0 0))
 
 (defglobal MAIN 
            ?*rect:single-pixel* = (send (defrectangle rect:single-pixel 0 0 1 1) get-pointer))
