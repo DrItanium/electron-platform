@@ -30,7 +30,7 @@ static int Callflushimage(void* theEnv);
 
 void InitializeDrawRoutines(void* theEnv) {
    EnvDefineFunction2(theEnv,
-         (char*)"rgb2cmap",
+         (char*)"rgb-to-cmap",
          'i',
          PTIEF Callrgb2cmap,
          (char*)"Callrgb2cmap",
