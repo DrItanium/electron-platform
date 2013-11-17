@@ -2,6 +2,7 @@
 (load* /lib/chicanery/input.clp)
 (load* /lib/chicanery/menu.clp)
 (load* /lib/chicanery/rectangle.clp)
+(load* /lib/chicanery/color.clp)
 
 (defglobal MAIN
            ?*system-initialized* = FALSE)
