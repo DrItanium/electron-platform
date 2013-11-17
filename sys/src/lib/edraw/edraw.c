@@ -8,7 +8,7 @@ static int imageExternalAddressID;
 static int rectangleExternalAddressID;
 static int pointExternalAddressID;
 
-static void DrawTextToString(void* theEnv);
+static void DrawTextToScreen(void* theEnv, DATA_OBJECT_PTR ret);
 static void BasePrintAddress(void*, char*, void*, char*);
 
 static void PrintImageAddress(void*, char*, void*);
@@ -59,9 +59,9 @@ void InitializeDrawRoutines(void* theEnv) {
 
     EnvDefineFunction2(theEnv,
             (char*)"screen/draw-text",
-            'v',
-            PTIEF DrawTextToString,
-            (char*)"DrawTextToString",
+            'm',
+            PTIEF DrawTextToScreen,
+            (char*)"DrawTextToScreen",
             (char*)"44aaaak");
 
    /* register the different external types */
@@ -392,21 +392,35 @@ int Callflushimage(void* theEnv) {
 }
 
 
-void DrawTextToString(void* theEnv) {
+void DrawTextToScreen(void* theEnv, DATA_OBJECT_PTR ret) {
     DATA_OBJECT _p, _src, _sp, _str;
     Point* p;
     Image* src;
     Point* sp;
+    Point tmp;
     char* str;
+    void* multifield;
+
    if((EnvArgTypeCheck(theEnv, (char*)"screen/draw-text", 1, EXTERNAL_ADDRESS, &_p) == FALSE) ||
          (EnvArgTypeCheck(theEnv, (char*)"screen/draw-text", 2, EXTERNAL_ADDRESS, &_src) == FALSE) ||
          (EnvArgTypeCheck(theEnv, (char*)"screen/draw-text", 3, EXTERNAL_ADDRESS, &_sp) == FALSE) ||
          (EnvArgTypeCheck(theEnv, (char*)"screen/draw-text", 4, STRING, &_str) == FALSE)) {
-      return;
+       EnvSetMultifieldErrorValue(theEnv, ret);
+       return;
    }
     p = DOToExternalAddress(_p);
     src = DOToExternalAddress(_src);
     sp = DOToExternalAddress(_sp);
     str = DOToString(_str);
-    string(screen, *p, src, *sp, display->defaultfont, str);
+    tmp = string(screen, *p, src, *sp, display->defaultfont, str);
+    multifield = EnvCreateMultifield(theEnv, 2);
+    SetMFType(multifield, 1, INTEGER);
+    SetMFValue(multifield, 1, EnvAddLong(theEnv, tmp.x));
+    SetMFType(multifield, 2, INTEGER);
+    SetMFValue(multifield, 2, EnvAddLong(theEnv, tmp.y));
+
+    SetpType(ret, MULTIFIELD);
+    SetpValue(ret, multifield);
+    SetpDOBegin(ret, 1);
+    SetpDOEnd(ret, 2);
 }
