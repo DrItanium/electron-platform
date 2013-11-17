@@ -8,6 +8,7 @@ static int imageExternalAddressID;
 static int rectangleExternalAddressID;
 static int pointExternalAddressID;
 
+static void DrawTextToString(void* theEnv);
 static void BasePrintAddress(void*, char*, void*, char*);
 
 static void PrintImageAddress(void*, char*, void*);
@@ -55,6 +56,13 @@ void InitializeDrawRoutines(void* theEnv) {
          PTIEF Callflushimage,
          (char*)"Callflushimage", 
          (char*)"11ii");
+
+    EnvDefineFunction2(theEnv,
+            (char*)"screen/draw-text",
+            'v',
+            PTIEF DrawTextToString,
+            (char*)"DrawTextToString",
+            (char*)"44aaaak");
 
    /* register the different external types */
    struct externalAddressType image = {
@@ -381,4 +389,24 @@ int Callflushimage(void* theEnv) {
       return 0;
    else
       return 1;
+}
+
+
+void DrawTextToString(void* theEnv) {
+    DATA_OBJECT _p, _src, _sp, _str;
+    Point* p;
+    Image* src;
+    Point* sp;
+    char* str;
+   if((EnvArgTypeCheck(theEnv, (char*)"screen/draw-text", 1, EXTERNAL_ADDRESS, &_p) == FALSE) ||
+         (EnvArgTypeCheck(theEnv, (char*)"screen/draw-text", 2, EXTERNAL_ADDRESS, &_src) == FALSE) ||
+         (EnvArgTypeCheck(theEnv, (char*)"screen/draw-text", 3, EXTERNAL_ADDRESS, &_sp) == FALSE) ||
+         (EnvArgTypeCheck(theEnv, (char*)"screen/draw-text", 4, STRING, &_str) == FALSE)) {
+      return;
+   }
+    p = DOToExternalAddress(_p);
+    src = DOToExternalAddress(_src);
+    sp = DOToExternalAddress(_sp);
+    str = DOToString(_str);
+    string(screen, *p, src, *sp, display->defaultfont, str);
 }
