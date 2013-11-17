@@ -55,7 +55,6 @@
    (?by INTEGER))
   (defrectangle (gensym*) ?x ?y ?bx ?by))
 
-
 (defmethod quickrect
   ((?x INTEGER)
    (?y INTEGER)
@@ -96,5 +95,11 @@
 (defmethod pixel:1x1 () 
   (pixel:1x1 0 0))
 
-(defglobal MAIN 
-           ?*rect:single-pixel* = (send (defrectangle rect:single-pixel 0 0 1 1) get-pointer))
+(definstances default-rect-classes
+              (rect:single-pixel of Rectangle
+                (x 0)
+                (y 0)
+                (bx 1)
+                (by 1)
+                (pointer (quickrect 0 0 1 1))))
+
