@@ -49,7 +49,7 @@
 
 (defmethod rgb-to-cmap
   ((?tuple INTEGER MULTIFIELD (>= (length$ ?tuple) 3)))
-  (rgb2cmap (nth$ 1 ?tuple)
-            (nth$ 2 ?tuple)
-            (nth$ 3 ?tuple)))
+  (rgb-to-cmap (nth$ 1 ?tuple)
+               (nth$ 2 ?tuple)
+               (nth$ 3 ?tuple)))
 
