@@ -292,4 +292,59 @@
 (definstances keyboard-interface
               (keyboard of keyboard))
 
+(defgeneric quickmenu)
+(defgeneric quickmenu/show)
+(defgeneric translate-menu-id)
+(defclass menu
+  (is-a native-pointer)
+  (role concrete)
+  (pattern-match reactive)
+  (slot pointer-class
+        (source composite)
+        (default Menu))
+  (multislot menu-entries 
+             (type LEXEME)
+             (storage local)
+             (visibility public)
+             (default ?NONE))
+  (message-handler get-native-arguments primary)
+  (message-handler show-menu primary))
 
+(defmessage-handler menu get-native-arguments primary
+                    ()
+                    ?self:menu-entries)
+(defmessage-handler menu show-menu primary 
+                    "shows the target menu and translates it to the corresponding symbolic
+                    representation"
+                    (?button)
+                    (translate-menu-id (menu/show ?self:pointer ?button)
+                                       ?self:menu-elements))
+
+(defmethod quickmenu/show 
+  "Construct a quick list and return a symbolic representation"
+  ((?elements MULTIFIELD LEXEME)
+   (?button INTEGER))
+  (translate-menu-id (menu/show (quickmenu ?elements) ?button) ?elements))
+
+(defmethod quickmenu 
+  "Defines a menu pointer without any associated object"
+  (($?entries LEXEME))
+  (quickmenu ?entries))
+
+(defmethod quickmenu
+  "Defines a menu pointer without any associated object"
+  ((?entries MULTIFIELD LEXEME))
+  (new menu (expand$ ?entries)))
+
+(defmethod translate-menu-id
+  "Translates numeric input from menu/show to symbolic representation"
+  ((?id INTEGER (> ?id -1))
+   (?elements MULTIFIELD LEXEME))
+  ; We are one indexed while libevent is zero indexed
+  (return (nth$ (+ ?id 1) ?elements)))
+
+(defmethod translate-menu-id
+  "Translates numeric input from menu/show to symbolic representation"
+  ((?id INTEGER)
+   ($?elements LEXEME))
+  (translate-menu-id ?id ?elements))
