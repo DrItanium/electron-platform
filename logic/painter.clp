@@ -1,69 +1,73 @@
 (load* /lib/chicanery.clp)
-
 (defglobal MAIN
-           ?*system-initialized* = FALSE)
-           
+           ?*old-timestamp* = 0
+           ?*max-factor* = 128
+           ?*factor* = 1)
+
+
+(defmethod on-resized
+  "method to handle resizing of the window"
+  ((?value SYMBOL (not (neq ?value FALSE TRUE))))
+  (if (and ?value (< (getwindow) 0)) then
+    (printout werror "ERROR: couldn't reattach to window" crlf)
+    (exit)))
+
+(definstances elements
+              (menu1 of menu (menu-entries cut copy paste))
+              (menu2 of menu (menu-entries eat sleep drink))
+              (scratch-rect of rectangle (x 0) (y 0) (bx 0) (by 0))
+              (pixel-image of image (rectangle [pixel])
+                           (replicate TRUE)
+                           (color (get-standard-color black))))
 
 (deffacts query-operation
-          (query input)
-          (defmenu menu1 cut copy paste)
-          (defmenu menu2 eat sleep drink))
+          (query input))
 
-(defrule initialize 
-         (declare (salience 10000))
-         (initial-fact)
-         =>
-         (if (not ?*system-initialized*) then
-           (eresized 0)
-           (bind ?*system-initialized* TRUE)))
 
-(defrule build-menus
-         (declare (salience 9999))
-         ?f <- (defmenu ?name $?entries)
-         =>
-         (retract ?f)
-         (defmenu ?name ?entries))
 
-(defrule on-resized
-         (declare (salience 1000))
-         ?f <- (event resized new ?value)
-         =>
-         (if (and ?value (< (getwindow) 0)) then
-           (printout werror "ERROR: couldn't reattach to window" crlf)
-           (exit)
-           else
-           (retract ?f)))
-
-(defrule query-input 
+(defrule query-input
          ?f <- (query input)
          =>
          (retract ?f)
-         (mouse/query)
-         (assert (input mouse
-                        buttons: (translate/mouse/buttons)
-                        position: (mouse/position)
-                        time-stamp: (mouse/timestamp))
-                 (input keyboard
-                        button: (translate/kbd/query))))
-
-
+         (bind ?*old-timestamp* (send [mouse] get-timestamp))
+         (send [mouse] query)
+         (send [keyboard] query)
+         (assert (check mouse)
+                 (check keyboard)))
 
 (defrule process-mouse-inputs
          (declare (salience -1))
-         ?f <- (input mouse
-                      buttons: $?
-                      position: ? ?
-                      time-stamp: ?)
+         ?f <- (check mouse)
          =>
          (retract ?f)
          (assert (query mouse)))
 
+(defrule process-mouse-inputs:button1
+         ?f <- (check mouse)
+         (object (is-a mouse)
+                 (name [mouse])
+                 (buttons button1)
+                 (position ?x ?y))
+         ?rect <- (object (is-a rectangle)
+                          (name [scratch-rect]))
+         =>
+         (retract ?f)
+         (modify-instance ?rect (x ?x) (y ?y)
+                          (bx (+ ?x ?*factor*)) 
+                          (by (+ ?y ?*factor*)))
+         ;rebuild the native memory since we've made
+         ; changes to the fields
+         (send ?rect build-pointer)
+         (screen/draw ?rect [pixel-image] [ZP])
+         (assert (query mouse)))
+
 
 (defrule process-mouse-inputs:menu1
-         ?f <- (input mouse 
-                      buttons: button3 
-                      position: ? ?
-                      time-stamp: ?)
+         (declare (salience 1))
+         ?f <- (check mouse)
+         (object (is-a mouse)
+                 (name [mouse])
+                 (buttons button3))
          =>
          (retract ?f)
          ; Display a menu
@@ -71,10 +75,12 @@
          (assert (query mouse)))
 
 (defrule process-mouse-inputs:menu2
-         ?f <- (input mouse 
-                      buttons: button2
-                      position: ? ?
-                      time-stamp: ?)
+         (declare (salience 1))
+         ?f <- (check mouse)
+         (object (is-a mouse)
+                 (name [mouse])
+                 (buttons button2)
+                 (timestamp ?ts))
          =>
          (retract ?f)
          ; Display a menu
@@ -84,23 +90,52 @@
 
 (defrule process-keyboard-inputs:quit
          (declare (salience 1))
-         ?f <- (input keyboard 
-                      button: ESC)
+         ?f <- (check keyboard)
+         (object (is-a keyboard)
+                 (name [keyboard])
+                 (keys ESC))
          =>
          (retract ?f)
          (exit))
 
 (defrule process-keyboard-inputs:nil
          (declare (salience 1))
-         ?f <- (input keyboard
-                      button: NIL)
+         ?f <- (check keyboard)
+         (object (is-a keyboard)
+                 (name [keyboard])
+                 (keys NIL))
          =>
          (retract ?f)
          (assert (query keyboard)))
 
+(defrule process-keyboard-inputs:up
+         (declare (salience 1))
+         ?f <- (check keyboard)
+         (object (is-a keyboard)
+                 (name [keyboard])
+                 (keys UP))
+         =>
+         (if (< ?*factor* ?*max-factor*) then
+           (bind ?*factor* (+ ?*factor* 1)))
+         (retract ?f)
+         (assert (query keyboard)))
+
+(defrule process-keyboard-inputs:down
+         (declare (salience 1))
+         ?f <- (check keyboard)
+         (object (is-a keyboard)
+                 (name [keyboard])
+                 (keys DOWN))
+         =>
+         (if (>= ?*factor* 0) then
+           (bind ?*factor* (- ?*factor* 1)))
+         (retract ?f)
+         (assert (query keyboard)))
 (defrule process-keyboard-inputs
-         ?f <- (input keyboard
-                      button: ?b&~NIL)
+         ?f <- (check keyboard)
+         (object (is-a keyboard)
+                 (name [keyboard])
+                 (keys ?b&~NIL))
          =>
          (retract ?f)
          (printout t "Pressed " ?b crlf)
@@ -111,4 +146,6 @@
          ?f2 <- (query mouse)
          =>
          (retract ?f ?f2)
+         (send [mouse] clear)
+         (send [keyboard] clear)
          (assert (query input)))
