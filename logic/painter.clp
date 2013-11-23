@@ -127,7 +127,7 @@
                  (name [keyboard])
                  (keys DOWN))
          =>
-         (if (>= ?*factor* 0) then
+         (if (> ?*factor* 1) then
            (bind ?*factor* (- ?*factor* 1)))
          (retract ?f)
          (assert (query keyboard)))
