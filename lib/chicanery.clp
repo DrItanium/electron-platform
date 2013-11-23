@@ -207,6 +207,8 @@
 
 (defclass image
   (is-a native-pointer)
+  (role concrete)
+  (pattern-match reactive)
   (slot pointer-class
         (source composite)
         (default Image))
@@ -235,6 +237,24 @@
                                (send ?self:color to-native-color)
                                else
                                ?self:color)))
+(defmethod screen/draw
+  ((?r INSTANCE-NAME)
+   (?src INSTANCE-NAME)
+   (?mask INSTANCE-NAME)
+   (?p INSTANCE-NAME))
+  (screen/draw (instance-address ?r)
+               (instance-address ?src)
+               (instance-address ?mask)
+               (instance-address ?p)))
+
+(defmethod screen/draw
+  ((?r INSTANCE-NAME)
+   (?src INSTANCE-NAME)
+   (?p INSTANCE-NAME))
+  (screen/draw (instance-address ?r)
+               (instance-address ?src)
+               (instance-address ?p)))
+
 (defmethod screen/draw
   ((?r rectangle)
    (?src image)
@@ -314,25 +334,30 @@
 (defclass mouse
   (is-a USER)
   (multislot position
-             (type INTEGER)
              (create-accessor read))
   (multislot buttons 
-             (type SYMBOL)
              (create-accessor read))
-  (multislot timestamp
+  (slot timestamp
              (type INTEGER)
              (create-accessor read))
+  (message-handler clear primary)
   (message-handler query primary))
+
+(defmessage-handler mouse clear primary
+                    ()
+                    (bind ?self:position (create$))
+                    (bind ?self:buttons (create$))
+                    (bind ?self:timestamp 0))
 
 (defmessage-handler mouse query primary
                     ()
                     (bind ?out (mouse/query))
                     (if ?out then
                       (bind ?self:position (bind ?tmp (mouse/position)))
-                      (bind ?self:buttons
-                            (translate/mouse/buttons (mouse/buttons)))
+                      (bind ?self:buttons (translate/mouse/buttons))
                       (bind ?self:timestamp (mouse/timestamp)))
                     (return ?out))
+
 (definstances mouse-object
               (mouse of mouse))
 
@@ -358,7 +383,7 @@
 
 (defmessage-handler keyboard clear primary 
                     () 
-                    (bind ?self:keys (create$))
+                    (slot-direct-delete$ keys 1 ?self:length)
                     (bind ?self:length 0))
 
 (defmessage-handler keyboard query primary
@@ -371,11 +396,12 @@
 
                     (if ?self:append-on-query then
                       (slot-direct-insert$ keys 
-                                           (+ ?self:index 1)
+                                           (+ ?self:length 1)
                                            ?key)
+                      (bind ?self:length (+ ?self:length 1))
                       else
-                      (bind ?self:keys (create$ ?key)))
-                    (bind ?self:length (+ ?self:length 1))
+                      (bind ?self:keys ?key)
+                      (bind ?self:length 1))
                     (return ?key))
 
 (definstances keyboard-interface
@@ -390,7 +416,7 @@
   (pattern-match reactive)
   (slot pointer-class
         (source composite)
-        (default Menu))
+        (default menu))
   (multislot menu-entries 
              (type LEXEME)
              (storage local)
@@ -407,7 +433,7 @@
                     representation"
                     (?button)
                     (translate-menu-id (menu/show ?self:pointer ?button)
-                                       ?self:menu-elements))
+                                       ?self:menu-entries))
 
 (defmethod quickmenu/show 
   "Construct a quick list and return a symbolic representation"
@@ -424,7 +450,11 @@
   "Defines a menu pointer without any associated object"
   ((?entries MULTIFIELD LEXEME))
   (new menu (expand$ ?entries)))
-
+(defmethod translate-menu-id
+  "Handles the case when -1 is passed"
+  ((?id INTEGER (= ?id -1))
+   (?elements MULTIFIELD LEXEME))
+  (return NIL))
 (defmethod translate-menu-id
   "Translates numeric input from menu/show to symbolic representation"
   ((?id INTEGER (> ?id -1))
@@ -437,4 +467,28 @@
   ((?id INTEGER)
    ($?elements LEXEME))
   (translate-menu-id ?id ?elements))
+
+; system initialization features
+(defglobal MAIN
+           ?*system-initialized* = FALSE)
+
+(defrule initialize 
+         (declare (salience 10000))
+         (initial-fact)
+         =>
+         (if (not ?*system-initialized*) then
+           (eresized 0)
+           (bind ?*system-initialized* TRUE)))
+
+; on-resized handling
+
+(defgeneric on-resized)
+
+(defrule on-resized
+         "library defined rule which calls the on-resized method"
+         (declare (salience 10000))
+         ?f <- (event resized new ?value)
+         =>
+         (retract ?f)
+         (on-resized ?value))
 
