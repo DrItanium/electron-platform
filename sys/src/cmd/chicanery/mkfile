@@ -5,12 +5,11 @@ BIN=$ELECTRON_PLATFORM_ROOT/sys/bin
 LDFLAGS="-lrt -lm -lc -L/usr/lib"
 CFLAGS=-Os -I$ELECTRON_PLATFORM_ROOT/sys/include -I/usr/include
 LIBELECTRON=$ELECTRON_PLATFORM_ROOT/sys/src/electron
-LIB=$ELECTRON_PLATFORM_ROOT/sys/src/lib
-LIBSRV=$ELECTRON_PLATFORM_ROOT/sys/src/srv
-LIBEFSSRV=$LIBSRV/efs
-LIBEVT=$LIB/evt
-LIBEDRAW=$LIB/edraw
-LIB=$LIBELECTRON/libelectron9.a $LIBEFSSRV/libefssrv9.a $LIBEVT/libevt.a $LIBEDRAW/libedraw.a
+LIB=$ELECTRON_PLATFORM_ROOT/sys/src/
+LIBEFSSRV=$LIB/libefs
+LIBEVT=$LIB/libevt
+LIBEDRAW=$LIB/libedraw
+LIB=$LIBELECTRON/libelectron9.a $LIBEFSSRV/libefs.a $LIBEVT/libevt.a $LIBEDRAW/libedraw.a
 
 OFILES=\
        chicanery.$O\
