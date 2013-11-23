@@ -1,3 +1,4 @@
+(load* /lib/core.clp)
 (load* /lib/chicanery.clp)
 (defglobal MAIN
            ?*old-timestamp* = 0
