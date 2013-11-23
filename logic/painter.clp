@@ -1,8 +1,4 @@
-(load* /lib/chicanery/pointer.clp)
-(load* /lib/chicanery/input.clp)
-(load* /lib/chicanery/menu.clp)
-(load* /lib/chicanery/rectangle.clp)
-(load* /lib/chicanery/color.clp)
+(load* /lib/chicanery.clp)
 
 (defglobal MAIN
            ?*system-initialized* = FALSE)
