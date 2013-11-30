@@ -154,3 +154,48 @@
    (?c INTEGER)
    (?d INTEGER))
   (binary-xor ?a (binary-xor ?b (binary-xor ?c ?d))))
+
+; some file-system related quick loaders
+(defmethod load* 
+  ((?paths LEXEME MULTIFIELD))
+  (bind ?output TRUE)
+  (progn$ (?path ?paths) 
+          (bind ?output (and ?output (load* ?path))))
+  (return ?output))
+
+(defmethod load*
+  (($?paths LEXEME))
+  (load* ?paths))
+
+(defmethod load
+  ((?paths LEXEME MULTIFIELD))
+  (bind ?output TRUE)
+  (progn$ (?path ?paths) 
+          (bind ?output (and ?output (load ?path))))
+  (return ?output))
+
+(defmethod load
+  (($?paths LEXEME))
+  (load ?paths))
+
+(defmethod batch
+  ((?paths LEXEME MULTIFIELD))
+  (bind ?output TRUE)
+  (progn$ (?path ?paths) 
+          (bind ?output (and ?output (batch ?path))))
+  (return ?output))
+
+(defmethod batch
+  (($?paths LEXEME))
+  (batch ?paths))
+
+(defmethod batch*
+  ((?paths LEXEME MULTIFIELD))
+  (bind ?output TRUE)
+  (progn$ (?path ?paths) 
+          (bind ?output (and ?output (batch* ?path))))
+  (return ?output))
+
+(defmethod batch*
+  (($?paths LEXEME))
+  (batch* ?paths))
