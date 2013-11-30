@@ -1,10 +1,19 @@
 (load* /lib/core.clp)
 (load* /lib/chicanery.clp)
-(defglobal MAIN
-           ?*old-timestamp* = 0
-           ?*max-factor* = 128
-           ?*factor* = 1)
 
+(deftemplate pen-size
+             (slot min 
+                   (type INTEGER)
+                   (range 1 ?VARIABLE)
+                   (default 1))
+             (slot max
+                   (type INTEGER)
+                   (range 1 ?VARIABLE)
+                   (default 128))
+             (slot current
+                   (type INTEGER)
+                   (range 1 ?VARIABLE)
+                   (default 1)))
 
 (defmethod on-resized
   "method to handle resizing of the window"
@@ -22,7 +31,10 @@
                            (color (get-standard-color black))))
 
 (deffacts query-operation
-          (query input))
+          (query input)
+          (pen-size (min 1)
+                    (max 128)
+                    (current 1)))
 
 
 
@@ -30,7 +42,6 @@
          ?f <- (query input)
          =>
          (retract ?f)
-         (bind ?*old-timestamp* (send [mouse] get-timestamp))
          (send [mouse] query)
          (send [keyboard] query)
          (assert (check mouse)
@@ -51,11 +62,12 @@
                  (position ?x ?y))
          ?rect <- (object (is-a rectangle)
                           (name [scratch-rect]))
+         (pen-size (current ?factor))
          =>
          (retract ?f)
          (modify-instance ?rect (x ?x) (y ?y)
-                          (bx (+ ?x ?*factor*)) 
-                          (by (+ ?y ?*factor*)))
+                          (bx (+ ?x ?factor)) 
+                          (by (+ ?y ?factor)))
          ;rebuild the native memory since we've made
          ; changes to the fields
          (send ?rect build-pointer)
@@ -115,9 +127,12 @@
          (object (is-a keyboard)
                  (name [keyboard])
                  (keys UP))
+         ?pen <- (pen-size 
+                   (current ?factor)
+                   (max ?max))
          =>
-         (if (< ?*factor* ?*max-factor*) then
-           (bind ?*factor* (+ ?*factor* 1)))
+         (if (< ?factor ?max) then
+           (modify ?pen (current (+ ?factor 1))))
          (retract ?f)
          (assert (query keyboard)))
 
@@ -127,9 +142,11 @@
          (object (is-a keyboard)
                  (name [keyboard])
                  (keys DOWN))
+         ?pen <- (pen-size (min ?min)
+                           (current ?factor))
          =>
-         (if (> ?*factor* 1) then
-           (bind ?*factor* (- ?*factor* 1)))
+         (if (> ?factor ?min) then
+           (modify ?pen (current (- ?factor 1))))
          (retract ?f)
          (assert (query keyboard)))
 (defrule process-keyboard-inputs
