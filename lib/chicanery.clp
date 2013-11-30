@@ -127,7 +127,8 @@
         (visibility public)
         (storage local)
         (default ?NONE))
-  (message-handler get-native-arguments primary))
+  (message-handler get-native-arguments primary)
+  (message-handler intersects primary))
 
 (defmessage-handler rectangle get-native-arguments primary
                     ()
@@ -362,8 +363,8 @@
   (multislot buttons 
              (create-accessor read))
   (slot timestamp
-             (type INTEGER)
-             (create-accessor read))
+        (type INTEGER)
+        (create-accessor read))
   (message-handler clear primary)
   (message-handler query primary))
 
@@ -516,3 +517,27 @@
          (retract ?f)
          (on-resized ?value))
 
+; intersection methods for points and rectangles
+(defgeneric intersects)
+
+(defmethod intersects 
+  "Checks to see if the given point intersects with the given area"
+  ((?px NUMBER)
+   (?py NUMBER)
+   (?rx NUMBER)
+   (?ry NUMBER)
+   (?rbx NUMBER)
+   (?rby NUMBER))
+  (and (<= ?rx ?px ?rbx)
+       (<= ?ry ?py ?rby)))
+
+(defmethod intersects
+  ((?px NUMBER)
+   (?py NUMBER)
+   (?rectangle rectangle))
+  =>
+  (send ?rectangle intersects ?px ?py))
+
+(defmessage-handler rectangle intersects primary
+                    (?px ?py)
+                    (intersects ?px ?py ?self:x ?self:y ?self:bx ?self:by))
