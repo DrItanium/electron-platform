@@ -7,8 +7,8 @@ install:
 	@cd electron && ${MAKE} install
 	@echo Installing raw shell
 	@cd cmd/raw && ${MAKE} install 
-	@echo Installing srv/efs 
-	@cd srv/efs && ${MAKE} install
+	@echo Installing libefs 
+	@cd libefs && ${MAKE} install
 	@echo Installing platform shell
 	@cd cmd/platform && ${MAKE} install
 
@@ -18,8 +18,8 @@ clean:
 	@cd electron && ${MAKE} clean
 	@echo Cleaning raw shell
 	@cd cmd/raw && ${MAKE} clean 
-	@echo Cleaning srv/efs 
-	@cd srv/efs && ${MAKE} clean
+	@echo Cleaning libefs 
+	@cd libefs && ${MAKE} clean
 	@echo Cleaning platform shell
 	@cd cmd/platform && ${MAKE} clean
 
@@ -28,7 +28,7 @@ uninstall:
 	@cd electron && ${MAKE} uninstall
 	@echo Uninstalling raw shell
 	@cd cmd/raw && ${MAKE} uninstall 
-	@echo Uninstalling srv/efs 
-	@cd srv/efs && ${MAKE} uninstall
+	@echo Uninstalling libefs 
+	@cd libefs && ${MAKE} uninstall
 	@echo Uninstalling platform shell
 	@cd cmd/platform && ${MAKE} uninstall
