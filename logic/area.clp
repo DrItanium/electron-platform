@@ -1,6 +1,6 @@
 (load* /lib/core.clp)
 (load* /lib/chicanery.clp)
-
+(defgeneric setup-background)
 (deftemplate pen-size
              (slot min 
                    (type INTEGER)
@@ -22,29 +22,54 @@
     (printout werror "ERROR: couldn't reattach to window" crlf)
     (exit)
     else
-    (assert (setup background))))
+    (setup-background)))
 
 (definstances elements
-              (menu1 of menu (menu-entries cut copy paste))
-              (menu2 of menu (menu-entries eat sleep drink))
-              (region0 of rectangle (x 0) (y 0) (bx 128) (by 32))
-              (point0 of point (x 0) (y 32))
-              (drawing-field of rectangle (x 4) (y 37) (bx 1020) (by 1020))
-              (drawing-field-border of rectangle (x 0) (y 33) (bx 1024) (by 1024))
-              (scratch-rect of rectangle (x 0) (y 0) (bx 0) (by 0))
-              (text of image (rectangle [region0])
+              (menu1 of menu 
+                     (menu-entries cut copy paste))
+              (menu2 of menu 
+                     (menu-entries eat sleep drink))
+              (region0 of rectangle 
+                       (x 0) 
+                       (y 0) 
+                       (bx 64) 
+                       (by 20))
+              (point0 of point 
+                      (x 0) 
+                      (y 32))
+              (drawing-field of rectangle 
+                             (x 4) 
+                             (y 25) 
+                             (bx 1020) 
+                             (by 1020))
+              (drawing-field-border of rectangle 
+                                    (x 0) 
+                                    (y 21) 
+                                    (bx 1024) 
+                                    (by 1024))
+              (scratch-rect of rectangle 
+                            (x 0) 
+                            (y 0) 
+                            (bx 0) 
+                            (by 0))
+              (text of image 
+                    (rectangle [region0])
                     (replicate TRUE)
                     (color (get-standard-color black)))
-              (inset-rect0 of image (rectangle [drawing-field-border])
+              (inset-rect0 of image 
+                           (rectangle [drawing-field-border])
                            (replicate TRUE)
                            (color (get-standard-color black)))
-              (field0 of image (rectangle [drawing-field])
+              (field0 of image 
+                      (rectangle [drawing-field])
                       (replicate TRUE)
                       (color (get-standard-color white)))
-              (button-background of image (rectangle [region0])
+              (button-background of image 
+                                 (rectangle [region0])
                                  (replicate TRUE)
                                  (color (get-standard-color paleyellow)))
-              (pixel-image of image (rectangle [pixel])
+              (pixel-image of image 
+                           (rectangle [pixel])
                            (replicate TRUE)
                            (color (get-standard-color black))))
 
@@ -53,17 +78,13 @@
           (pen-size (min 1)
                     (max 128)
                     (current 1)))
-
-(defrule setup-background 
-         (declare (salience 10000))
-         ?f <- (setup background)
-         =>
-         (retract ?f)
-         (screen/draw [drawing-field-border] [inset-rect0] [ZP])
-         (screen/draw [drawing-field] [field0] [ZP])
-         (screen/draw [region0] [button-background] [ZP])
-         (screen/draw-text [ZP] [text] [ZP] "File")
-         (screen/flush 1))
+(defmethod setup-background
+  ()
+  (screen/draw [drawing-field-border] [inset-rect0] [ZP])
+  (screen/draw [drawing-field] [field0] [ZP])
+  (screen/draw [region0] [button-background] [ZP])
+  (screen/draw-text [ZP] [text] [ZP] "File")
+  (screen/flush 1))
 
 (defrule query-input
          ?f <- (query input)
@@ -179,6 +200,7 @@
            (modify ?pen (current (- ?factor 1))))
          (retract ?f)
          (assert (query keyboard)))
+
 (defrule process-keyboard-inputs
          ?f <- (check keyboard)
          (object (is-a keyboard)
