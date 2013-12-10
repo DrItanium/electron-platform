@@ -33,34 +33,41 @@
                (send ?p get-pointer)))
 
 (definstances engine-pieces
+              (background of slice
+                          (x 0)
+                          (y 0)
+                          (bx 1920)
+                          (by 1080)
+                          (replicate TRUE)
+                          (color (get-standard-color black)))
               (playfield of slice
                          (x 0)
                          (y 0)
-                         (bx 320)
-                         (by 200)
+                         (bx 1280)
+                         (by 720)
                          (replicate TRUE)
-                         (color (get-standard-color palebluegreen)))
+                         (color (get-standard-color paleyellow)))
               (inventory of slice
-                         (x 321)
-                         (y 0)
-                         (bx 512)
-                         (by 200)
+                         (x 1283)
+                         (y 3)
+                         (bx 1920)
+                         (by 720)
                          (replicate TRUE)
-                         (color (get-standard-color palegreyblue)))
+                         (color (get-standard-color medblue)))
               (log of slice
-                   (x 0)
-                   (y 201)
-                   (bx 320)
-                   (by 384)
+                   (x 3)
+                   (y 723)
+                   (bx 1280)
+                   (by 1077)
                    (replicate TRUE)
-                   (color (get-standard-color paleblue)))
+                   (color (get-standard-color white)))
               (misc of slice
-                    (x 321)
-                    (y 201)
-                    (bx 512)
-                    (by 384)
+                    (x 1283)
+                    (y 723)
+                    (bx 1917)
+                    (by 1077)
                     (replicate TRUE)
-                    (color (get-standard-color paleyellow))))
+                    (color (get-standard-color white))))
 
 (deffacts query-operation
           (query input))
@@ -79,6 +86,7 @@
 
 (defmethod engine-update
   ()
+  (screen/draw [background] [ZP])
   (screen/draw [playfield] [ZP])
   (screen/draw [inventory] [ZP])
   (screen/draw [log] [ZP])
