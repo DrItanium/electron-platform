@@ -541,3 +541,21 @@
 (defmessage-handler rectangle intersects primary
                     (?px ?py)
                     (intersects ?px ?py ?self:x ?self:y ?self:bx ?self:by))
+
+(defgeneric screen/dimensions/width)
+(defgeneric screen/dimensions/height)
+(defgeneric as-point:screen/dimensions)
+
+(defmethod screen/dimensions/width
+  ()
+  (nth$ 3 (screen/dimensions)))
+
+(defmethod screen/dimensions/height
+  ()
+  (nth$ 4 (screen/dimensions)))
+
+(defmethod as-point:screen/dimensions
+  ()
+  (new Point (screen/dimensions/width)
+       (screen/dimensions/height)))
+
