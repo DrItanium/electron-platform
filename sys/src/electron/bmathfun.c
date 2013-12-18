@@ -86,9 +86,7 @@ globle void AdditionFunction(
   DATA_OBJECT_PTR returnValue)
   {
    double ftotal = 0.0;
-   double ftmp = 0.0;
    long long ltotal = 0LL;
-   long long ltmp = 0LL;
    intBool useFloatTotal = FALSE;
    EXPRESSION *theExpression;
    DATA_OBJECT theArgument;
@@ -103,48 +101,43 @@ globle void AdditionFunction(
 
    theExpression = GetFirstArgument();
 
-   while (theExpression != NULL) {
-      if (! GetNumericArgument(theEnv,theExpression,(char*)"+",&theArgument,useFloatTotal,pos)) 
-          theExpression = NULL;
-      else 
-          theExpression = GetNextArgument(theExpression);
+   while (theExpression != NULL)
+     {
+      if (! GetNumericArgument(theEnv,theExpression,(char*)"+",&theArgument,useFloatTotal,pos)) theExpression = NULL;
+      else theExpression = GetNextArgument(theExpression);
 
-      if (useFloatTotal) { 
-          ftmp = ValueToDouble(theArgument.value);
-          if(ftmp != 0.0) 
-              ftotal += ftmp;
-      } else {
-         if (theArgument.type == INTEGER) { 
-             ltmp = ValueToLong(theArgument.value);
-             if(ltmp != 0LL) 
-                 ltotal += ltmp;
-         } else {
-            ftmp = ValueToDouble(theArgument.value);
-            if(ftmp == 0.0) {
-                ftotal = (double)ltotal;
-            } else {
-                ftotal = (double)ltotal + ftmp;
-            }
+      if (useFloatTotal)
+        { ftotal += ValueToDouble(theArgument.value); }
+      else
+        {
+         if (theArgument.type == INTEGER)
+           { ltotal += ValueToLong(theArgument.value); }
+         else
+           {
+            ftotal = (double) ltotal + ValueToDouble(theArgument.value);
             useFloatTotal = TRUE;
-         }
-      }
+           }
+        }
 
       pos++;
-   }
+     }
 
    /*======================================================*/
    /* If a floating point number was in the argument list, */
    /* then return a float, otherwise return an integer.    */
    /*======================================================*/
 
-   if (useFloatTotal) {
+   if (useFloatTotal)
+     {
       returnValue->type = FLOAT;
       returnValue->value = (void *) EnvAddDouble(theEnv,ftotal);
-   } else {
+     }
+   else
+     {
       returnValue->type = INTEGER;
       returnValue->value = (void *) EnvAddLong(theEnv,ltotal);
-   }
-}
+     }
+  }
 
 /****************************************/
 /* MultiplicationFunction: CLIPS access */
@@ -155,9 +148,7 @@ globle void MultiplicationFunction(
   DATA_OBJECT_PTR returnValue)
   {
    double ftotal = 1.0;
-   double ftmp = 0.0;
    long long ltotal = 1LL;
-   long long ltmp = 0LL;
    intBool useFloatTotal = FALSE;
    EXPRESSION *theExpression;
    DATA_OBJECT theArgument;
@@ -172,60 +163,42 @@ globle void MultiplicationFunction(
 
    theExpression = GetFirstArgument();
 
-   while (theExpression != NULL) {
-      if (! GetNumericArgument(theEnv,theExpression,(char*)"*",&theArgument,useFloatTotal,pos)) 
-          theExpression = NULL;
-      else 
-          theExpression = GetNextArgument(theExpression);
+   while (theExpression != NULL)
+     {
+      if (! GetNumericArgument(theEnv,theExpression,(char*)"*",&theArgument,useFloatTotal,pos)) theExpression = NULL;
+      else theExpression = GetNextArgument(theExpression);
 
-      if (useFloatTotal) { 
-         ftmp = ValueToDouble(theArgument.value);
-         if(ftmp == 0.0) {
-             ftotal = 0.0;
-             break;
-         } else if(ftmp != 1.0) {
-             ftotal *= ftmp;
-         }
-      } else {
-         if (theArgument.type == INTEGER) { 
-             ltmp = ValueToLong(theArgument.value);
-             if(ltmp == 0LL) {
-                 ltotal = 0LL;
-                 break;
-             } else if (ltmp != 1LL) {
-                 /* We shouldn't waste time handling multiplication by one */
-                 ltotal *= ltmp;
-             }
-         } else {
-            ftmp = ValueToDouble(theArgument.value);
-            if(ftmp == 0.0) {
-                ftotal = 0.0;
-                break;
-            } else if(ftmp == 1.0) {
-                /* just cast as a double instead of wasting a multiply */
-                ftotal = (double) ltotal;
-            } else {
-                ftotal = (double) ltotal * ftmp;
-            }
+      if (useFloatTotal)
+        { ftotal *= ValueToDouble(theArgument.value); }
+      else
+        {
+         if (theArgument.type == INTEGER)
+           { ltotal *= ValueToLong(theArgument.value); }
+         else
+           {
+            ftotal = (double) ltotal * ValueToDouble(theArgument.value);
             useFloatTotal = TRUE;
-         }
-      }
+           }
+        }
       pos++;
-   }
+     }
 
    /*======================================================*/
    /* If a floating point number was in the argument list, */
    /* then return a float, otherwise return an integer.    */
    /*======================================================*/
 
-   if (useFloatTotal) {
+   if (useFloatTotal)
+     {
       returnValue->type = FLOAT;
       returnValue->value = (void *) EnvAddDouble(theEnv,ftotal);
-   } else {
+     }
+   else
+     {
       returnValue->type = INTEGER;
       returnValue->value = (void *) EnvAddLong(theEnv,ltotal);
-   }
- }
+     }
+  }
 
 /*************************************/
 /* SubtractionFunction: CLIPS access */
